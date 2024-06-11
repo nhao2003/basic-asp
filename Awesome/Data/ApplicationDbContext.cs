@@ -11,5 +11,9 @@ namespace Awesome.Data
         }
 
         public DbSet<Blog> Blogs { get; set; }
+
+        public DbSet<User> Users { get; set; }
+
+        public DbSet<Session> Sessions { get; set; }
     }
 }

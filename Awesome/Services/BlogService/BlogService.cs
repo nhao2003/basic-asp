@@ -1,6 +1,6 @@
 ﻿using Awesome.Data;
-using Awesome.DTOs.Blog;
 using Awesome.DTOs;
+using Awesome.DTOs.Blog;
 using Awesome.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 

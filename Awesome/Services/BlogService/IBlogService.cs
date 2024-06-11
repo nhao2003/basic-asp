@@ -1,5 +1,5 @@
-﻿using Awesome.DTOs.Blog;
-using Awesome.DTOs;
+﻿using Awesome.DTOs;
+using Awesome.DTOs.Blog;
 using Awesome.Models.Entities;
 namespace Awesome.Services.BlogService
 {

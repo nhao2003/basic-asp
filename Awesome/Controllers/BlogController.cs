@@ -1,5 +1,4 @@
-﻿using Awesome.Authentication;
-using Awesome.Data;
+﻿using Awesome.Data;
 using Awesome.DTOs;
 using Awesome.DTOs.Blog;
 using Awesome.Services.BlogService;
@@ -11,17 +10,14 @@ namespace Awesome.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    [AuthenticationFilter]
     public class BlogController : ControllerBase
     {
-
         private readonly IBlogService _blogService;
         public BlogController(ApplicationDbContext context)
         {
             _blogService = new BlogService(context);
         }
         [HttpGet]
-        [AuthenticationFilter]
         public async Task<IActionResult> GetAsync()
         {
             var blogs = await _blogService.GetBlogs();

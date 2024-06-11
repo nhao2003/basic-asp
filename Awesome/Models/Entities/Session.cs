@@ -3,11 +3,10 @@
     public class Session
     {
         public Guid Id { get; set; }
-        public required Guid UserId { get; set; }
-        public required string Token { get; set; }
+        public required string RefreshToken { get; set; }
         public required DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-        public required User User { get; set; }
+        public User User { get; set; }
     }
 }

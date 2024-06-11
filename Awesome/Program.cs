@@ -1,11 +1,10 @@
 using Awesome.Authentication;
 using Awesome.Data;
+using Awesome.Services.AuthService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Reflection.Metadata;
-using System.Text;
+using System.IdentityModel.Tokens.Jwt;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,7 +32,23 @@ builder.Services.AddHttpLogging(logging =>
     logging.RequestBodyLogLimit = 4096;
     logging.ResponseBodyLogLimit = 4096;
 });
+using var loggerFactory = LoggerFactory.Create(b => b.SetMinimumLevel(LogLevel.Trace).AddConsole());
 
+var secret = builder.Configuration["JWT:AccessSecretKey"] ?? throw new InvalidOperationException("Secret not configured");
+builder.Services.AddTransient<AuthService>();
+
+builder.Services.AddTransient<JwtBearerHandler, JwtAuthenticationHandler>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddScheme<JwtBearerOptions, JwtAuthenticationHandler>(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.Events = new JwtAuthenticationBearEvent();
+});
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+});
 
 
 
@@ -50,9 +65,9 @@ if (app.Environment.IsDevelopment())
 }
 
 
-app.UseAuthentication();
-
-//app.UseAuthorization();
+// Use custom Filter
+//app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
@@ -63,3 +78,30 @@ app.UseStaticFiles();
 app.MapGet("/", () => "Hello World!");
 
 app.Run();
+
+Task LogAttempt(IHeaderDictionary headers, string eventType)
+{
+    var logger = loggerFactory.CreateLogger<Program>();
+
+    var authorizationHeader = headers["Authorization"].FirstOrDefault();
+
+    if (authorizationHeader is null)
+        logger.LogInformation($"{eventType}. JWT not present");
+    else
+    {
+        string jwtString = authorizationHeader.Substring("Bearer ".Length);
+
+        var jwt = new JwtSecurityToken(jwtString);
+
+        // Print reason why the token is invalid
+        if (jwt.ValidTo < DateTime.UtcNow)
+            logger.LogInformation($"{eventType}. Token expired at {jwt.ValidTo.ToLongTimeString()}. System time: {DateTime.UtcNow.ToLongTimeString()}");
+        else if (jwt.ValidFrom > DateTime.UtcNow)
+            logger.LogInformation($"{eventType}. Token not valid until {jwt.ValidFrom.ToLongTimeString()}. System time: {DateTime.UtcNow.ToLongTimeString()}");
+        else
+            logger.LogInformation($"{eventType}. Token is valid");
+
+    }
+
+    return Task.CompletedTask;
+}
