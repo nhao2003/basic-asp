@@ -1,0 +1,19 @@
+﻿version: '3.8'
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  db:
+    container_name: sqlserver
+    image: mcr.microsoft.com/mssql/server:latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Abcd@1234"
+    ports:
+      - "1433:1433"

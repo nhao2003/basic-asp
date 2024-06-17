@@ -1,0 +1,25 @@
+﻿# Ignore everything
+**
+
+# Allow project files and directories
+!**/*.csproj
+!**/*.sln
+!**/*.cs
+!**/*.json
+!**/*.config
+
+# Allow Dockerfile
+!Dockerfile
+
+# Allow docker-compose files
+!docker-compose*.yml
+
+# Ignore specific directories
+**/[Bb]in
+**/[Oo]bj
+**/[Nn]ode_modules
+**/[Ww]wwroot
+
+# Ignore git and vscode directories
+**/.git
+**/.vscode
