@@ -7,12 +7,13 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Awesome.Utils;
 
 namespace Awesome.Services.AuthService
 {
     public class AuthService : IAuthService
     {
-        private static readonly PasswordHasher<string> passwordHasher = new PasswordHasher<string>();
+        private CryptoUtils _cryptoUtils;
 
         private readonly IConfiguration _configuration;
         private readonly string _accessSecretKey;
@@ -23,8 +24,9 @@ namespace Awesome.Services.AuthService
         private readonly string _audience;
         private readonly ApplicationDbContext _context;
 
-        public AuthService(IConfiguration configuration, ApplicationDbContext context)
+        public AuthService(IConfiguration configuration, ApplicationDbContext context, CryptoUtils cryptoUtils)
         {
+            _cryptoUtils = cryptoUtils ?? throw new ArgumentNullException(nameof(cryptoUtils));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _context = context ?? throw new ArgumentNullException(nameof(context));
 
@@ -70,7 +72,7 @@ namespace Awesome.Services.AuthService
         public async Task<AuthenticationResponse> SignIn(string username, string password)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
-            if (user == null || passwordHasher.VerifyHashedPassword(username, user.Password, password) ==
+            if (user == null || _cryptoUtils.Verify(username, user.Password, password) ==
                 PasswordVerificationResult.Failed)
             {
                 throw new UnauthorizedAccessException("Invalid username or password");
@@ -88,7 +90,7 @@ namespace Awesome.Services.AuthService
                 throw new InvalidOperationException("User already exists");
             }
 
-            var hashedPassword = passwordHasher.HashPassword(username, password);
+            var hashedPassword = _cryptoUtils.Hash(username, password);
 
             var user = new User
             {
@@ -116,7 +118,7 @@ namespace Awesome.Services.AuthService
                 User = user,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = null,
-                RefreshToken = refreshToken
+                RefreshToken = _cryptoUtils.Hash(user.Username, refreshToken)
             };
             _context.Sessions.Add(session);
             _context.SaveChanges();
@@ -155,12 +157,25 @@ namespace Awesome.Services.AuthService
             var session = await _context.Sessions.FindAsync(Guid.Parse(sessionId));
 
 
-            if (session == null || session.RefreshToken != refreshToken)
+            if (session == null)
             {
                 throw new SecurityTokenException("Invalid refresh token");
             }
 
             var user = await _context.Users.FindAsync(session.UserId);
+            try
+            {
+                if (user == null || _cryptoUtils.Verify(user.Username, session.RefreshToken, refreshToken) ==
+                    PasswordVerificationResult.Failed)
+                {
+                    throw new SecurityTokenException("Invalid refresh token");
+                }
+            }
+            catch (Exception e)
+            {
+                throw new SecurityTokenException("Invalid refresh token");
+            }
+            
             var newAccessToken = GenerateToken(session.Id.ToString(), user, _accessSecretKey, _tokenLifeTime);
             session.UpdatedAt = DateTime.Now;
             _context.Sessions.Update(session);

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
+using Awesome.Utils;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +37,7 @@ using var loggerFactory = LoggerFactory.Create(b => b.SetMinimumLevel(LogLevel.T
 
 var secret = builder.Configuration["JWT:AccessSecretKey"] ??
              throw new InvalidOperationException("Secret not configured");
+builder.Services.AddTransient<CryptoUtils>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<JwtBearerHandler, JwtAuthenticationHandler>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
