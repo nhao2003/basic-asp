@@ -56,6 +56,7 @@ namespace Awesome.Services.AuthService
                 new Claim("SessionId", sessionId),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
+                new Claim(type: ClaimTypes.Role, value: user.Role.ToString())
             };
 
             var token = new JwtSecurityToken(

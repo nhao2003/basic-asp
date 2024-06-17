@@ -36,6 +36,7 @@ namespace Awesome.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PostAsync([FromBody] CreateBlogDto blog)
         {
             var newBlog = await _blogService.CreateBlog(blog);
@@ -43,6 +44,7 @@ namespace Awesome.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutAsync(string id, [FromBody] UpdateBlogDto blog)
         {
             var updatedBlog = await _blogService.UpdateBlog(Guid.Parse(id), blog);
@@ -54,6 +56,7 @@ namespace Awesome.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync(string id)
         {
             var deletedBlog = await _blogService.DeleteBlog(Guid.Parse(id));
