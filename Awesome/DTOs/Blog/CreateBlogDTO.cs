@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Awesome.DTOs
+namespace Awesome.DTOs.Blog
 {
-    public class CreateBlogDTO
+    public class CreateBlogDto
     {
         [Required]
         [StringLength(255)]

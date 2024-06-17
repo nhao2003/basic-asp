@@ -7,8 +7,8 @@ namespace Awesome.Services.BlogService
     {
         public Task<IEnumerable<Blog>> GetBlogs();
         public Task<Blog?> GetBlog(Guid id);
-        public Task<Blog> CreateBlog(CreateBlogDTO blog);
-        public Task<Blog?> UpdateBlog(Guid id, UpdateBlogDTO blog);
+        public Task<Blog> CreateBlog(CreateBlogDto blog);
+        public Task<Blog?> UpdateBlog(Guid id, UpdateBlogDto blog);
         public Task<Blog?> DeleteBlog(Guid id);
     }
 }

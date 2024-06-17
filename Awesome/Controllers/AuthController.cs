@@ -1,5 +1,6 @@
 ﻿using Awesome.DTOs.Auth;
 using Awesome.Services.AuthService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -8,17 +9,11 @@ namespace Awesome.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController(IAuthService authenticationService) : ControllerBase
     {
-        private readonly AuthService _authenticationService;
-
-        public AuthController(AuthService authenticationService)
-        {
-            _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
-        }
 
         [HttpPost("signin")]
-        public async Task<IActionResult> SignInAsync([FromBody] AuthenticationRequest request)
+        public async Task<IActionResult> SignInAsync([FromBody] AuthenticationRequest? request)
         {
             if (request == null)
             {
@@ -27,7 +22,7 @@ namespace Awesome.Controllers
 
             try
             {
-                var user = await _authenticationService.SignIn(request.Username, request.Password);
+                var user = await authenticationService.SignIn(request.Username, request.Password);
                 return Ok(user);
             }
             catch (UnauthorizedAccessException e)
@@ -41,7 +36,7 @@ namespace Awesome.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task<IActionResult> SignUpAsync([FromBody] AuthenticationRequest request)
+        public async Task<IActionResult> SignUpAsync([FromBody] AuthenticationRequest? request)
         {
             if (request == null)
             {
@@ -50,7 +45,7 @@ namespace Awesome.Controllers
 
             try
             {
-                var user = await _authenticationService.SignUp(request.Username, request.Password);
+                var user = await authenticationService.SignUp(request.Username, request.Password);
                 return Ok(user);
             }
             catch (InvalidOperationException e)
@@ -71,7 +66,8 @@ namespace Awesome.Controllers
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> RefreshAsync([FromBody] RefreshRequest request)
+        [AllowAnonymous]
+        public async Task<IActionResult> RefreshAsync([FromBody] RefreshRequest? request)
         {
             if (request == null || string.IsNullOrWhiteSpace(request.RefreshToken))
             {
@@ -80,7 +76,7 @@ namespace Awesome.Controllers
 
             try
             {
-                var response = await _authenticationService.RefreshToken(request.RefreshToken);
+                var response = await authenticationService.RefreshToken(request.RefreshToken);
                 return Ok(response);
             }
             catch (SecurityTokenException e)

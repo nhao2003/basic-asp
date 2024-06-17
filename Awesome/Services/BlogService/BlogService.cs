@@ -6,26 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Awesome.Services.BlogService
 {
-    public class BlogService : IBlogService
+    public class BlogService(ApplicationDbContext context) : IBlogService
     {
-        private readonly ApplicationDbContext _context;
-
-        public BlogService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task<IEnumerable<Blog>> GetBlogs()
         {
-            return await _context.Blogs.ToListAsync();
+            return await context.Blogs.ToListAsync();
         }
 
         public async Task<Blog?> GetBlog(Guid id)
         {
-            return await _context.Blogs.FindAsync(id);
+            return await context.Blogs.FindAsync(id);
         }
 
-        public async Task<Blog> CreateBlog(CreateBlogDTO data)
+        public async Task<Blog> CreateBlog(CreateBlogDto data)
         {
             var blog = new Blog
             {
@@ -36,14 +29,14 @@ namespace Awesome.Services.BlogService
                 Content = data.Content,
                 CreatedAt = DateTime.Now
             };
-            _context.Blogs.Add(blog);
-            await _context.SaveChangesAsync();
+            context.Blogs.Add(blog);
+            await context.SaveChangesAsync();
             return blog;
         }
 
-        public async Task<Blog?> UpdateBlog(Guid id, UpdateBlogDTO blog)
+        public async Task<Blog?> UpdateBlog(Guid id, UpdateBlogDto blog)
         {
-            var blogToUpdate = await _context.Blogs.FindAsync(id);
+            var blogToUpdate = await context.Blogs.FindAsync(id);
             if (blogToUpdate == null)
             {
                 return null;
@@ -54,20 +47,20 @@ namespace Awesome.Services.BlogService
             blogToUpdate.Author = blog.Author ?? blogToUpdate.Author;
             blogToUpdate.Content = blog.Content ?? blogToUpdate.Content;
             blogToUpdate.UpdatedAt = DateTime.Now;
-            _context.Blogs.Update(blogToUpdate);
-            await _context.SaveChangesAsync();
+            context.Blogs.Update(blogToUpdate);
+            await context.SaveChangesAsync();
             return blogToUpdate;
         }
 
         public async Task<Blog?> DeleteBlog(Guid id)
         {
-            var blogToDelete = await _context.Blogs.FirstOrDefaultAsync(b => b.Id == id);
+            var blogToDelete = await context.Blogs.FirstOrDefaultAsync(b => b.Id == id);
             if (blogToDelete == null)
             {
                 return null;
             }
-            _context.Blogs.Remove(blogToDelete);
-            await _context.SaveChangesAsync();
+            context.Blogs.Remove(blogToDelete);
+            await context.SaveChangesAsync();
             return blogToDelete;
         }
     }

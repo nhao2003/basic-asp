@@ -1,10 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace Awesome.Models.Entities
+﻿namespace Awesome.Models.Entities
 {
+    public enum UserRole
+    {
+        Admin,
+        User
+    }
     public class User
     {
         public Guid Id { get; set; }
+        
+        public UserRole Role { get; set; } = UserRole.User;
         public required string Username { get; set; }
         public required string Password { get; set; }
         public string? Email { get; set; }

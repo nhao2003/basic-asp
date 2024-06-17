@@ -2,7 +2,7 @@
 
 namespace Awesome.DTOs.Blog
 {
-    public class UpdateBlogDTO
+    public class UpdateBlogDto
     {
 
         [StringLength(255)]

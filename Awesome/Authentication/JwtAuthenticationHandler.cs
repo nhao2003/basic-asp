@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Awesome.Data;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,12 +12,14 @@ namespace Awesome.Authentication
 {
     public class JwtAuthenticationHandler : JwtBearerHandler
     {
-
         private readonly JwtSecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
+        private readonly ApplicationDbContext _context;
 
-        public JwtAuthenticationHandler(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger, UrlEncoder encoder)
+        public JwtAuthenticationHandler(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger,
+            UrlEncoder encoder, ApplicationDbContext context)
             : base(options, logger, encoder)
         {
+            _context = context;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -26,7 +30,8 @@ namespace Awesome.Authentication
             }
 
             var authorizationHeader = authorizationHeaderValues.FirstOrDefault();
-            if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer ") || _tokenHandler.CanReadToken(authorizationHeader.Substring("Bearer ".Length).Trim()) != true)
+            if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer ") ||
+                _tokenHandler.CanReadToken(authorizationHeader.Substring("Bearer ".Length).Trim()) != true)
             {
                 return AuthenticateResult.Fail("Invalid authorization header.");
             }
@@ -40,17 +45,23 @@ namespace Awesome.Authentication
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes("12345678910!@#$%^&*()12345678910!@#$%^&*()"); // Replace with your actual secret key
+                var key = Encoding.ASCII.GetBytes(
+                    "12345678910!@#$%^&*()12345678910!@#$%^&*()"); // Replace with your actual secret key
                 var validationParameters = GetTokenValidationParameters(key);
 
                 var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
 
-                if (IsValidJwtToken(validatedToken))
+                if (!IsValidJwtToken(validatedToken)) return AuthenticateResult.Fail("Invalid token.");
+                var session =
+                    await _context.Sessions.FindAsync(Guid.Parse(principal.FindFirst("SessionId")?.Value));
+                if (session == null)
                 {
-                    return AuthenticateResult.Success(new AuthenticationTicket(principal, JwtBearerDefaults.AuthenticationScheme));
+                    return AuthenticateResult.Fail("Invalid token.");
                 }
 
-                return AuthenticateResult.Fail("Invalid token.");
+                return AuthenticateResult.Success(new AuthenticationTicket(principal,
+                    JwtBearerDefaults.AuthenticationScheme));
+
             }
             catch (SecurityTokenException ex)
             {
@@ -78,7 +89,8 @@ namespace Awesome.Authentication
         private bool IsValidJwtToken(SecurityToken validatedToken)
         {
             return validatedToken is JwtSecurityToken jwtToken &&
-                   jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
+                   jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
+                       StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

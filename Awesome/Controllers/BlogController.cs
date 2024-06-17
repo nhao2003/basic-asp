@@ -36,14 +36,14 @@ namespace Awesome.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostAsync([FromBody] CreateBlogDTO blog)
+        public async Task<IActionResult> PostAsync([FromBody] CreateBlogDto blog)
         {
             var newBlog = await _blogService.CreateBlog(blog);
             return new CreatedResult("Get", new { id = newBlog.Id });
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAsync(string id, [FromBody] UpdateBlogDTO blog)
+        public async Task<IActionResult> PutAsync(string id, [FromBody] UpdateBlogDto blog)
         {
             var updatedBlog = await _blogService.UpdateBlog(Guid.Parse(id), blog);
             if (updatedBlog == null)
