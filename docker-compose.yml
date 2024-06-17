@@ -11,7 +11,8 @@ services:
       - db
   db:
     container_name: sqlserver
-    image: mcr.microsoft.com/mssql/server:latest
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    hostname: admin
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: "Abcd@1234"
