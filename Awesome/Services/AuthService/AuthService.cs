@@ -10,6 +10,7 @@ using System.Text;
 using Awesome.Utils;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Vonage.Video.Authentication;
 
 namespace Awesome.Services.AuthService
 {
@@ -50,7 +51,7 @@ namespace Awesome.Services.AuthService
                         throw new ArgumentNullException("Jwt:Audience is missing in appsettings.json");
         }
 
-        private string GenerateToken(string sessionId, User user, string secretKey, double expiryTime)
+        private string GenerateToken(string sessionId, User? user, string secretKey, double expiryTime)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -102,7 +103,8 @@ namespace Awesome.Services.AuthService
                 Id = Guid.NewGuid(),
                 Username = username,
                 Password = hashedPassword,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                Role = UserRole.Admin
             };
 
             _context.Users.Add(user);
@@ -111,7 +113,7 @@ namespace Awesome.Services.AuthService
             return GenerateTokens(user);
         }
 
-        private AuthenticationResponse GenerateTokens(User user)
+        private AuthenticationResponse GenerateTokens(User? user)
         {
             var id = Guid.NewGuid();
 

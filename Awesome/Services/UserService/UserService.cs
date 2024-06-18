@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Linq;
 using System.Threading.Tasks;
+using Awesome.DTOs.User;
 using Awesome.Services.SmsService;
 using Awesome.Utils;
 
@@ -37,7 +38,7 @@ namespace Awesome.Services.UserService
             return smsService.SendSmsAsync(phoneNumber, message);
         }
 
-        public async Task<User> GetUserAsync(Guid userId)
+        public async Task<User?> GetUserAsync(Guid userId)
         {
             return await context.Users.FindAsync(userId);
         }
@@ -70,7 +71,7 @@ namespace Awesome.Services.UserService
             }
 
             user.PhoneNumber = phoneNumber;
-            var otp = this.GenerateRandomString(6);
+            var otp = GenerateRandomString(6);
             var hashedOtp = cryptoUtils.Hash(user.Id.ToString(), otp);
             user.PhoneNumberVerificationToken = hashedOtp;
             user.PhoneNumberVerifiedAt = null;
@@ -82,7 +83,7 @@ namespace Awesome.Services.UserService
             return user;
         }
 
-        public async Task<User> UpdateUserProfileAsync(Guid userId, string fullName)
+        public async Task<User> UpdateUserProfileAsync(Guid userId, UpdateProfileDto updateProfileDto)
         {
             var user = await context.Users.FindAsync(userId);
             if (user == null)
@@ -90,7 +91,7 @@ namespace Awesome.Services.UserService
                 throw new KeyNotFoundException("User not found");
             }
 
-            user.FullName = fullName;
+            user.FullName = updateProfileDto.FullName;
             context.Users.Update(user);
             await context.SaveChangesAsync();
 

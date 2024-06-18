@@ -55,7 +55,7 @@ namespace Awesome.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync(string id)
         {
-            var deletedBlog = await blogService.DeleteBlog(Guid.Parse(id));
+            var deletedBlog = await blogService.DeleteBlog(Guid.TryParse(id, out var blogId) ? blogId : Guid.Empty);
             if (deletedBlog == null)
             {
                 return NotFound();
