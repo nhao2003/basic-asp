@@ -1,9 +1,11 @@
 ﻿using Awesome.DTOs.Auth;
 using Awesome.Services.AuthService;
+using Awesome.Services.SmsService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Vonage;
 
 namespace Awesome.Controllers
 {
@@ -11,7 +13,6 @@ namespace Awesome.Controllers
     [ApiController]
     public class AuthController(IAuthService authenticationService) : ControllerBase
     {
-
         [HttpPost("signin")]
         public async Task<IActionResult> SignInAsync([FromBody] AuthenticationRequest? request)
         {

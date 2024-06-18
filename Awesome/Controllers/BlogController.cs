@@ -10,24 +10,19 @@ namespace Awesome.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class BlogController : ControllerBase
+    public class BlogController(IBlogService blogService) : ControllerBase
     {
-        private readonly IBlogService _blogService;
-        public BlogController(ApplicationDbContext context)
-        {
-            _blogService = new BlogService(context);
-        }
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
-            var blogs = await _blogService.GetBlogs();
+            var blogs = await blogService.GetBlogs();
             return Ok(blogs);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(string id)
         {
-            var blog = await _blogService.GetBlog(Guid.Parse(id));
+            var blog = await blogService.GetBlog(Guid.Parse(id));
             if (blog == null)
             {
                 return NotFound();
@@ -39,7 +34,7 @@ namespace Awesome.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PostAsync([FromBody] CreateBlogDto blog)
         {
-            var newBlog = await _blogService.CreateBlog(blog);
+            var newBlog = await blogService.CreateBlog(blog);
             return new CreatedResult("Get", new { id = newBlog.Id });
         }
 
@@ -47,7 +42,7 @@ namespace Awesome.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutAsync(string id, [FromBody] UpdateBlogDto blog)
         {
-            var updatedBlog = await _blogService.UpdateBlog(Guid.Parse(id), blog);
+            var updatedBlog = await blogService.UpdateBlog(Guid.Parse(id), blog);
             if (updatedBlog == null)
             {
                 return NotFound();
@@ -59,7 +54,7 @@ namespace Awesome.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync(string id)
         {
-            var deletedBlog = await _blogService.DeleteBlog(Guid.Parse(id));
+            var deletedBlog = await blogService.DeleteBlog(Guid.Parse(id));
             if (deletedBlog == null)
             {
                 return NotFound();

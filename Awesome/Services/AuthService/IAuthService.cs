@@ -7,5 +7,6 @@ namespace Awesome.Services.AuthService
         Task<AuthenticationResponse> SignIn(string username, string password);
         Task<AuthenticationResponse> SignUp(string username, string password);
         Task<RefreshTokenResponse> RefreshToken(string refreshToken);
+        public Task SendVerificationCode(string toAddress);
     }
 }

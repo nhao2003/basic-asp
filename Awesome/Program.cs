@@ -5,7 +5,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
+using Awesome.Middlewares;
+using Awesome.Services.MailService;
+using Awesome.Services.SmsService;
+using Awesome.Services.UserService;
 using Awesome.Utils;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,6 +43,18 @@ using var loggerFactory = LoggerFactory.Create(b => b.SetMinimumLevel(LogLevel.T
 var secret = builder.Configuration["JWT:AccessSecretKey"] ??
              throw new InvalidOperationException("Secret not configured");
 builder.Services.AddTransient<CryptoUtils>();
+builder.Services.Configure<MailKitEmailSenderOptions>(options =>
+{
+    options.Host_Address = builder.Configuration["ExternalProviders:MailKit:SMTP:Address"];
+    options.Host_Port = Convert.ToInt32(builder.Configuration["ExternalProviders:MailKit:SMTP:Port"]);
+    options.Host_Username = builder.Configuration["ExternalProviders:MailKit:SMTP:Account"];
+    options.Host_Password = builder.Configuration["ExternalProviders:MailKit:SMTP:Password"];
+    options.Sender_EMail = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderEmail"];
+    options.Sender_Name = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderName"];
+});
+builder.Services.AddTransient<IEmailSender, MailKitEmailSender>();
+builder.Services.AddTransient<ISmsService, VonageSmsMessage>();
+builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<JwtBearerHandler, JwtAuthenticationHandler>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -49,7 +66,6 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 });
-
 
 // add-migration InitialCreate
 // update-database
@@ -91,7 +107,7 @@ app.UseHttpLogging();
 app.UseStaticFiles();
 
 app.MapGet("/", () => "Hello World!");
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.Run();
 
 Task LogAttempt(IHeaderDictionary headers, string eventType)

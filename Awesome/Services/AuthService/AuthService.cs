@@ -8,14 +8,15 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Awesome.Utils;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Awesome.Services.AuthService
 {
     public class AuthService : IAuthService
     {
-        private CryptoUtils _cryptoUtils;
+        private readonly CryptoUtils _cryptoUtils;
 
-        private readonly IConfiguration _configuration;
         private readonly string _accessSecretKey;
         private readonly string _refreshSecretKey;
         private readonly double _tokenLifeTime;
@@ -23,26 +24,29 @@ namespace Awesome.Services.AuthService
         private readonly string _issuer;
         private readonly string _audience;
         private readonly ApplicationDbContext _context;
+        private readonly IEmailSender EmailSender;
 
-        public AuthService(IConfiguration configuration, ApplicationDbContext context, CryptoUtils cryptoUtils)
+        public AuthService(IConfiguration configuration, ApplicationDbContext context, CryptoUtils cryptoUtils,
+            IEmailSender emailSender)
         {
+            EmailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
             _cryptoUtils = cryptoUtils ?? throw new ArgumentNullException(nameof(cryptoUtils));
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            var configuration1 = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _context = context ?? throw new ArgumentNullException(nameof(context));
 
-            _accessSecretKey = _configuration["Jwt:AccessSecretKey"] ??
+            _accessSecretKey = configuration1["Jwt:AccessSecretKey"] ??
                                throw new ArgumentNullException("Jwt:AccessSecretKey is missing in appsettings.json");
-            _refreshSecretKey = _configuration["Jwt:RefreshSecretKey"] ??
+            _refreshSecretKey = configuration1["Jwt:RefreshSecretKey"] ??
                                 throw new ArgumentNullException("Jwt:RefreshSecretKey is missing in appsettings.json");
-            _tokenLifeTime = double.Parse(_configuration["Jwt:TokenLifeTime"] ??
+            _tokenLifeTime = double.Parse(configuration1["Jwt:TokenLifeTime"] ??
                                           throw new ArgumentNullException(
                                               "Jwt:TokenLifeTime is missing in appsettings.json"));
-            _refreshTokenLifeTime = double.Parse(_configuration["Jwt:RefreshTokenLifeTime"] ??
+            _refreshTokenLifeTime = double.Parse(configuration1["Jwt:RefreshTokenLifeTime"] ??
                                                  throw new ArgumentNullException(
                                                      "Jwt:RefreshTokenLifeTime is missing in appsettings.json"));
-            _issuer = _configuration["Jwt:Issuer"] ??
+            _issuer = configuration1["Jwt:Issuer"] ??
                       throw new ArgumentNullException("Jwt:Issuer is missing in appsettings.json");
-            _audience = _configuration["Jwt:Audience"] ??
+            _audience = configuration1["Jwt:Audience"] ??
                         throw new ArgumentNullException("Jwt:Audience is missing in appsettings.json");
         }
 
@@ -176,7 +180,7 @@ namespace Awesome.Services.AuthService
             {
                 throw new SecurityTokenException("Invalid refresh token");
             }
-            
+
             var newAccessToken = GenerateToken(session.Id.ToString(), user, _accessSecretKey, _tokenLifeTime);
             session.UpdatedAt = DateTime.Now;
             _context.Sessions.Update(session);
@@ -186,6 +190,13 @@ namespace Awesome.Services.AuthService
             {
                 AccessToken = newAccessToken,
             };
+        }
+
+        public async Task SendVerificationCode(string toAddress)
+        {
+            var subject = "sample subject";
+            var body = "sample body";
+            await EmailSender.SendEmailAsync(toAddress, subject, body);
         }
     }
 }

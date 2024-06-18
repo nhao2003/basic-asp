@@ -45,8 +45,7 @@ namespace Awesome.Authentication
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(
-                    "12345678910!@#$%^&*()12345678910!@#$%^&*()"); // Replace with your actual secret key
+                var key = "12345678910!@#$%^&*()12345678910!@#$%^&*()"u8.ToArray(); // Replace with your actual secret key
                 var validationParameters = GetTokenValidationParameters(key);
 
                 var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
