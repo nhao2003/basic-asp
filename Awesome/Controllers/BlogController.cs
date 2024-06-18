@@ -23,7 +23,11 @@ namespace Awesome.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(string id)
         {
-            var blog = await blogService.GetBlog(Guid.Parse(id));
+            if (!Guid.TryParse(id, out var blogId))
+            {
+                return BadRequest("Invalid blog id.");
+            }
+            var blog = await blogService.GetBlog(blogId);
             if (blog == null)
             {
                 return NotFound();
@@ -43,7 +47,11 @@ namespace Awesome.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutAsync(string id, [FromBody] UpdateBlogDto blog)
         {
-            var updatedBlog = await blogService.UpdateBlog(Guid.Parse(id), blog);
+            if (!Guid.TryParse(id, out var blogId))
+            {
+                return BadRequest("Invalid blog id.");
+            }
+            var updatedBlog = await blogService.UpdateBlog(blogId, blog);
             if (updatedBlog == null)
             {
                 return NotFound();
@@ -55,7 +63,11 @@ namespace Awesome.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync(string id)
         {
-            var deletedBlog = await blogService.DeleteBlog(Guid.TryParse(id, out var blogId) ? blogId : Guid.Empty);
+            if (!Guid.TryParse(id, out var blogId))
+            {
+                return BadRequest("Invalid blog id.");
+            }
+            var deletedBlog = await blogService.DeleteBlog(blogId);
             if (deletedBlog == null)
             {
                 return NotFound();
