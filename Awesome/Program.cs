@@ -5,7 +5,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
+using AutoMapper;
 using Awesome.Middlewares;
+using Awesome.Profiles;
+using Awesome.Services.BlogService;
 using Awesome.Services.MailService;
 using Awesome.Services.SmsService;
 using Awesome.Services.UserService;
@@ -52,10 +55,12 @@ builder.Services.Configure<MailKitEmailSenderOptions>(options =>
     options.Sender_EMail = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderEmail"];
     options.Sender_Name = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderName"];
 });
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddTransient<IEmailSender, MailKitEmailSender>();
 builder.Services.AddTransient<ISmsService, VonageSmsMessage>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IBlogService, BlogService>();
 builder.Services.AddTransient<JwtBearerHandler, JwtAuthenticationHandler>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddScheme<JwtBearerOptions, JwtAuthenticationHandler>(JwtBearerDefaults.AuthenticationScheme,

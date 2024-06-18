@@ -2,10 +2,6 @@
 {
     public class Blog
     {
-        /// <summary>
-        /// Guid is a 128-bit integer that is globally unique.
-        /// This is used to uniquely identify the blog.
-        /// </summary>
         public Guid Id { get; set; }
         public required string Title { get; set; }
         public required string Description { get; set; }

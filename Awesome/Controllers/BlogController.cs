@@ -1,4 +1,5 @@
-﻿using Awesome.Data;
+﻿using AutoMapper;
+using Awesome.Data;
 using Awesome.DTOs;
 using Awesome.DTOs.Blog;
 using Awesome.Services.BlogService;
@@ -10,13 +11,13 @@ namespace Awesome.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class BlogController(IBlogService blogService) : ControllerBase
+    public class BlogController(IBlogService blogService, IMapper mapper) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
             var blogs = await blogService.GetBlogs();
-            return Ok(blogs);
+            return Ok(blogs.Select(mapper.Map<BlogResponseDto>));
         }
 
         [HttpGet("{id}")]
@@ -27,7 +28,7 @@ namespace Awesome.Controllers
             {
                 return NotFound();
             }
-            return Ok(blog);
+            return Ok(mapper.Map<BlogResponseDto>(blog));
         }
 
         [HttpPost]
@@ -47,7 +48,7 @@ namespace Awesome.Controllers
             {
                 return NotFound();
             }
-            return Ok(updatedBlog);
+            return Ok(mapper.Map<BlogResponseDto>(updatedBlog));
         }
 
         [HttpDelete("{id}")]
@@ -59,7 +60,7 @@ namespace Awesome.Controllers
             {
                 return NotFound();
             }
-            return Ok(deletedBlog);
+            return Ok(mapper.Map<BlogResponseDto>(deletedBlog));
         }
     }
 }
