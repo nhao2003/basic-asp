@@ -1,4 +1,5 @@
-﻿using Awesome.DTOs.Auth;
+﻿using System.Security.Claims;
+using Awesome.DTOs.Auth;
 using Awesome.Services.AuthService;
 using Awesome.Services.SmsService;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Vonage;
+using RefreshRequest = Awesome.DTOs.Auth.RefreshRequest;
 
 namespace Awesome.Controllers
 {
@@ -60,10 +62,19 @@ namespace Awesome.Controllers
         }
 
         [HttpPost("signout")]
-        public IActionResult SignOut()
+        public async Task<IActionResult> SignOut()
         {
-            // Implementation for sign-out (e.g., invalidate tokens, remove sessions) can be added here
-            return Ok(new { message = "Signed out successfully" });
+            var nameIdentifier = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var refreshToken = HttpContext.User.FindFirst("SessionId")?.Value;
+            
+            if (nameIdentifier == null || refreshToken == null)
+            {
+                return BadRequest(new { message = "Invalid request" });
+            }
+            
+            await authenticationService.SignOut(Guid.Parse(nameIdentifier.Value), Guid.Parse(refreshToken));
+            
+            return Ok(new { message = "Sign out successful" });
         }
 
         [HttpPost("refresh")]

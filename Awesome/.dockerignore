@@ -1,0 +1,52 @@
+﻿# Ignore .NET build directories
+**/bin
+**/obj
+**/out
+
+# Ignore user-specific files
+*.user
+*.csproj.user
+
+# Ignore Rider project files
+.idea/
+.idea/**
+
+# Ignore Visual Studio Code workspace files
+.vscode/
+.vscode/**
+
+# Ignore local NuGet packages
+*.nupkg
+
+# Ignore logs
+*.log
+**/logs
+
+# Ignore temporary files
+*~
+*.swp
+*.swo
+*.tmp
+
+# Ignore publish output
+**/publish
+
+# Ignore coverage files
+coverage/
+coverage/**
+
+# Ignore .env files
+.env
+
+# Ignore Docker-specific files
+Dockerfile.*
+docker-compose*.yaml
+
+# Ignore git files
+.git
+.gitignore
+
+# Ignore npm files (if using Node.js tooling)
+node_modules/
+npm-debug.log
+yarn-error.log

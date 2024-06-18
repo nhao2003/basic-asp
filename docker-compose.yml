@@ -3,7 +3,7 @@ services:
   app:
     container_name: app
     build:
-      context: .
+      context: ./Awesome
       dockerfile: Dockerfile
     ports:
       - "8000:8000"

@@ -138,67 +138,74 @@ namespace Awesome.Services.AuthService
 
         public async Task<RefreshTokenResponse> RefreshToken(string refreshToken)
         {
-            var principal = new JwtSecurityTokenHandler().ValidateToken(refreshToken, new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_refreshSecretKey)),
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = false,
-                ValidIssuer = _issuer,
-                ValidAudience = _audience
-            }, out var validatedToken);
-
-            if (validatedToken is not JwtSecurityToken jwtToken)
-            {
-                throw new SecurityTokenException("Invalid token");
-            }
-
-            var sessionId = principal.FindFirst("SessionId")?.Value;
-
-            if (sessionId == null)
-            {
-                throw new SecurityTokenException("Invalid token");
-            }
-
-            var session = await _context.Sessions.FindAsync(Guid.Parse(sessionId));
-
-
-            if (session == null)
-            {
-                throw new SecurityTokenException("Invalid refresh token");
-            }
-
-            var user = await _context.Users.FindAsync(session.UserId);
             try
             {
+                var principal = new JwtSecurityTokenHandler().ValidateToken(refreshToken, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_refreshSecretKey)),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = false,
+                    ValidIssuer = _issuer,
+                    ValidAudience = _audience
+                }, out var validatedToken);
+
+                if (validatedToken is not JwtSecurityToken jwtToken)
+                {
+                    throw new SecurityTokenException("Invalid token");
+                }
+
+                var sessionId = principal.FindFirst("SessionId")?.Value;
+
+                if (sessionId == null)
+                {
+                    throw new SecurityTokenException("Invalid token");
+                }
+
+                var session = await _context.Sessions.FindAsync(Guid.Parse(sessionId));
+
+
+                if (session == null)
+                {
+                    throw new SecurityTokenException("Invalid refresh token");
+                }
+
+                var user = await _context.Users.FindAsync(session.UserId);
+
                 if (user == null || _cryptoUtils.Verify(user.Username, session.RefreshToken, refreshToken) ==
                     PasswordVerificationResult.Failed)
                 {
                     throw new SecurityTokenException("Invalid refresh token");
                 }
+
+                var newAccessToken = GenerateToken(session.Id.ToString(), user, _accessSecretKey, _tokenLifeTime);
+                session.UpdatedAt = DateTime.Now;
+                _context.Sessions.Update(session);
+                await _context.SaveChangesAsync();
+
+                return new RefreshTokenResponse
+                {
+                    AccessToken = newAccessToken,
+                };
             }
+
             catch (Exception e)
             {
                 throw new SecurityTokenException("Invalid refresh token");
             }
-
-            var newAccessToken = GenerateToken(session.Id.ToString(), user, _accessSecretKey, _tokenLifeTime);
-            session.UpdatedAt = DateTime.Now;
-            _context.Sessions.Update(session);
-            await _context.SaveChangesAsync();
-
-            return new RefreshTokenResponse
-            {
-                AccessToken = newAccessToken,
-            };
         }
 
-        public async Task SendVerificationCode(string toAddress)
+        public Task SignOut(Guid userId, Guid sessionId)
         {
-            var subject = "sample subject";
-            var body = "sample body";
-            await EmailSender.SendEmailAsync(toAddress, subject, body);
+            var session = _context.Sessions.Find(sessionId);
+            if (session == null || session.UserId != userId)
+            {
+                throw new SecurityTokenException("Invalid session");
+            }
+
+            _context.Sessions.Remove(session);
+            return _context.SaveChangesAsync();
         }
     }
 }

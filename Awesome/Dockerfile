@@ -25,6 +25,8 @@ WORKDIR /app
 # Copy the published output from the build environment
 COPY --from=build /app .
 
+ENV CONNECTION_STRING="DockerConnection"
+
 # Expose the port the app runs on
 EXPOSE 8000
 
