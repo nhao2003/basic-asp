@@ -32,4 +32,5 @@
         ContentTemplate="{DataTemplate view:MainPage}"
         Route="MainPage" />
 
+
 </Shell>

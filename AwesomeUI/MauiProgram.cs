@@ -20,9 +20,17 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
-        builder.Services.AddSingleton<MonkeyService>();
+        builder.Services.AddSingleton(Connectivity.Current);
+        builder.Services.AddSingleton(Geolocation.Default);
+        builder.Services.AddSingleton(Map.Default);
+		
+        builder.Services.AddSingleton<BlogService>();
         builder.Services.AddSingleton<MonkeysViewModel>();
         builder.Services.AddSingleton<MainPage>();
+
+        builder.Services.AddTransient<MonkeyDetailsViewModel>();
+        builder.Services.AddTransient<DetailsPage>();
+
         return builder.Build();
     }
 }

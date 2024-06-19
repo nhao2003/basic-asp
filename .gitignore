@@ -9,7 +9,10 @@
 *.user
 *.userosscache
 *.sln.docstates
+
+# Ignore file appsettings.json trong tất cả các thư mục
 **/appsettings.json
+
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
