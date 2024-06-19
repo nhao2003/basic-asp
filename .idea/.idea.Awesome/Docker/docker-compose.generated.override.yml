@@ -1,0 +1,22 @@
+# This is a generated file. Not intended for manual editing.
+version: "3.8"
+services:
+  app:
+    build:
+      context: "C:\\Users\\nhath\\RiderProjects\\Awesome\\Awesome"
+      dockerfile: "Dockerfile"
+      target: "build"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/Awesome.dll"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "awesome:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\nhath\\.nuget\\packages:/root/.nuget/packages"
+    - "C:\\Users\\nhath\\RiderProjects\\Awesome\\Awesome:/app:rw"
+    - "C:\\Users\\nhath\\RiderProjects\\Awesome:/src:rw"
+    working_dir: "/app"
