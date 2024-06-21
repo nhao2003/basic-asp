@@ -33,12 +33,11 @@
         Title="Sign In"
         ContentTemplate="{DataTemplate view:SignInPage}"
         Route="SignInPage" />
-    <ShellContent
-        Shell.NavBarIsVisible="False"
-        Title="Main Page"
-        ContentTemplate="{DataTemplate view:HomePage}"
-        Route="HomePage" />
-
+    <TabBar
+        Route="MainPage">
+        <ShellContent Title="Home" ContentTemplate="{DataTemplate view:HomePage}" Route="HomePage" />
+        <ShellContent Title="Account" ContentTemplate="{DataTemplate view:AccountPage}" Route="AccountPage" />
+    </TabBar>
     <ShellContent
         Shell.NavBarIsVisible="true"
         Title="Details"

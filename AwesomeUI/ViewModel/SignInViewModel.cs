@@ -37,7 +37,7 @@ public partial class SignInViewModel : BaseViewModel
 
             if (isSignedIn)
             {
-                await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
+                await Shell.Current.GoToAsync($"//MainPage/{nameof(HomePage)}");
             }
             else
             {

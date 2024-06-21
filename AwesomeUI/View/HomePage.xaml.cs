@@ -2,10 +2,11 @@
 
 public partial class HomePage : ContentPage
 {
-    public HomePage(HomeViewModel viewModel)
+    public HomePage()
     {
         InitializeComponent();
-        BindingContext = viewModel;
+        Debug.Assert(IPlatformApplication.Current != null, "IPlatformApplication.Current != null");
+        BindingContext = IPlatformApplication.Current.Services.GetService<HomeViewModel>();
     }
 }
 

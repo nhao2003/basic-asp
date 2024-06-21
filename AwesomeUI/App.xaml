@@ -5,8 +5,8 @@
              x:Class="AwesomeUI.App">
     <Application.Resources>
         <ResourceDictionary>
-            <Color x:Key="Primary">#FFC107</Color>
-            <Color x:Key="PrimaryDark">#FFA000</Color>
+            <Color x:Key="Primary">#502BD4</Color>
+            <Color x:Key="PrimaryDark">#1A237E</Color>
             <Color x:Key="Accent">#00BCD4</Color>
 
             <Color x:Key="LightBackground">#FAF9F8</Color>

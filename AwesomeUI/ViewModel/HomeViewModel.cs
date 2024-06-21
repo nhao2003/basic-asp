@@ -55,47 +55,14 @@ public partial class HomeViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    async Task GoToDetails(Blog? monkey)
+    async Task GoToDetails(Blog? blog)
     {
-        if (monkey == null)
+        if (blog == null)
             return;
 
         await Shell.Current.GoToAsync(nameof(BlogDetailPage), new Dictionary<string, object>
         {
-            { "Monkey", monkey }
+            { "Blog", blog }
         });
-    }
-
-    [RelayCommand]
-    async Task GetClosestMonkey()
-    {
-        if (IsBusy || Blogs.Count == 0)
-            return;
-        
-        try
-        {
-        //     // Get cached location, else get real location.
-        //     var location = await geolocation.GetLastKnownLocationAsync();
-        //     if (location == null)
-        //     {
-        //         location = await geolocation.GetLocationAsync(new GeolocationRequest
-        //         {
-        //             DesiredAccuracy = GeolocationAccuracy.Medium,
-        //             Timeout = TimeSpan.FromSeconds(30)
-        //         });
-        //     }
-
-            // var first = Monkeys.OrderBy(m => location.CalculateDistance(
-            //         new Location(m.Latitude, m.Longitude), DistanceUnits.Miles))
-            //     .FirstOrDefault();
-            //
-            // await Shell.Current.DisplayAlert("", first.Author + " " +
-            //                                      first.Location, "OK");
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Unable to query location: {ex.Message}");
-            await Shell.Current.DisplayAlert("Error!", ex.Message, "OK");
-        }
     }
 }
