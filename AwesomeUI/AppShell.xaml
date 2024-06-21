@@ -38,9 +38,5 @@
         <ShellContent Title="Home" ContentTemplate="{DataTemplate view:HomePage}" Route="HomePage" />
         <ShellContent Title="Account" ContentTemplate="{DataTemplate view:AccountPage}" Route="AccountPage" />
     </TabBar>
-    <ShellContent
-        Shell.NavBarIsVisible="true"
-        Title="Details"
-        ContentTemplate="{DataTemplate view:BlogDetailPage}"
-        Route="BlogDetailPage" />
+
 </Shell>

@@ -7,7 +7,15 @@
     xmlns:viewmodel="clr-namespace:AwesomeUI.ViewModel"
     Title="{Binding Blog.Title}"
     x:DataType="viewmodel:BlogDetailViewModel">
-    
+    <NavigationPage.TitleView>
+          <Label
+                Text="{Binding Blog.Title}"
+                FontSize="20"
+                FontAttributes="Bold"
+                TextColor="White"
+                HorizontalOptions="Center"
+                VerticalOptions="Center" />
+    </NavigationPage.TitleView>
     <ContentPage.BindingContext >
         <viewmodel:BlogDetailViewModel />
     </ContentPage.BindingContext>

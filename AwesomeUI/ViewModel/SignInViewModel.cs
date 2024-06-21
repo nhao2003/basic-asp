@@ -66,4 +66,11 @@ public partial class SignInViewModel : BaseViewModel
             IsBusy = false;
         }
     }
+    
+    [RelayCommand]
+    async Task GoToSignUpAsync()
+    {
+        await Shell.Current.Navigation.PushAsync(new SignUpPage());
+    }
+    
 }

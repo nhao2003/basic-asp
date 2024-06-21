@@ -40,6 +40,8 @@ public static class MauiProgram
         builder.Services.AddTransient<AccountViewModel>();
         builder.Services.AddTransient<AccountPage>();
         
+        builder.Services.AddTransient<SignUpViewModel>();
+        
 
         return builder.Build();
     }

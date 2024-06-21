@@ -1,11 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:model="clr-namespace:AwesomeUI.Model"
+             Title="Sign Up"
              xmlns:viewmodel="clr-namespace:AwesomeUI.ViewModel"
-             x:DataType="viewmodel:SignInViewModel"
-             x:Class="AwesomeUI.View.SignInPage">
+                x:DataType="viewmodel:SignUpViewModel"
+             x:Class="AwesomeUI.View.SignUpPage">
     <ContentPage.Content>
+        
         <StackLayout VerticalOptions="CenterAndExpand" Padding="30">
             <Image Source="dotnet_bot.png" HeightRequest="250" WidthRequest="250" HorizontalOptions="Center"></Image>
             <Frame BorderColor="Black" CornerRadius="5" Padding="5" Margin="0,10,0,0">
@@ -14,18 +16,13 @@
             <Frame BorderColor="Black" CornerRadius="5" Padding="5" Margin="0,10,0,0">
                 <Entry Placeholder="Enter Your Password" IsPassword="True" Text="{Binding Password}" />
             </Frame>
+            <Frame BorderColor="Black" CornerRadius="5" Padding="5" Margin="0,10,0,0">
+                <Entry Placeholder="Confirm Your Password" IsPassword="True" Text="{Binding ConfirmPassword}" />
+            </Frame>
             <Grid Margin="0,10,0,0">
-                <Button Text="Login" Command="{Binding SignInCommand}" IsVisible="{Binding IsNotBusy}" />
+                <Button Text="Sign Up" Command="{Binding SignUpCommand}" IsVisible="{Binding IsNotBusy}" />
                 <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
             </Grid>
-
-            <Label Text="Don't have an account?" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Padding="10" />
-
-            <Label Text="Sign Up" TextColor="Black" TextDecorations="Underline" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Padding="10">
-                <Label.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding GoToSignUpCommand}" />
-                </Label.GestureRecognizers>
-            </Label>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
