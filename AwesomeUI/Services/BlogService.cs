@@ -10,9 +10,6 @@ public class BlogService(HttpClient httpClient, AuthService authService) : BaseS
     private List<Blog>? _blogList;
     public async Task<List<Blog>?> GetBlogs()
     {
-        if (_blogList?.Count > 0)
-            return _blogList;
-        
         var request = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl}/Blog");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authService.AccessToken);
         var response = await _httpClient.SendAsync(request);

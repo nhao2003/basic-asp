@@ -11,5 +11,7 @@ public partial class SignUpPage : ContentPage
     public SignUpPage()
     {
         InitializeComponent();
+        Debug.Assert(IPlatformApplication.Current != null, "IPlatformApplication.Current != null");
+        BindingContext = IPlatformApplication.Current.Services.GetService<SignUpViewModel>();
     }
 }

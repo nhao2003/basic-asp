@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http.Json;
+using System.Text;
 using AwesomeUI.DTO.Auth;
 
 namespace AwesomeUI.Services;
@@ -36,6 +37,36 @@ public class AuthService(HttpClient httpClient) : BaseService(httpClient)
         catch (Exception e)
         {
             Debug.WriteLine($"Unable to sign in: {e}");
+            throw;
+        }
+    }
+    
+    public async Task<string?> SignUpAsync(AuthRequest authRequest)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/Auth/signup");
+        var json = JsonSerializer.Serialize(authRequest);
+        request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+        try
+        {
+            var response = await httpClient.SendAsync(request);
+            var body = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"Response: {body}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                return error?["message"] ?? "Please check your credentials and try again.";
+            }
+            var content = await response.Content.ReadFromJsonAsync<AuthResponse>();
+            _accessToken = content.AccessToken;
+            _refreshToken = content.RefreshToken;
+            Debug.WriteLine($"Access Token: {_accessToken}");
+            Debug.WriteLine($"Refresh Token: {_refreshToken}");
+            return null;
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"Unable to sign up: {e}");
             throw;
         }
     }

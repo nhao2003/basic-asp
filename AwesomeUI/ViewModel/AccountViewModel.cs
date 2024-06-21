@@ -72,7 +72,7 @@ namespace AwesomeUI.ViewModel
                 IsBusy = true;
                 var user = await _userService.GetUserAsync();
                 FullName = user?.FullName;
-                BirthDate = user?.DateOfBirth;
+                BirthDate = user?.DateOfBirth ?? DateTime.FromOADate(0);
             }
             catch (Exception e)
             {
