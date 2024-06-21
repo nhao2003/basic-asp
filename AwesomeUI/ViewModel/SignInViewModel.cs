@@ -1,17 +1,21 @@
 ﻿using AwesomeUI.DTO.Auth;
 using AwesomeUI.Services;
 using AwesomeUI.View;
+using Prism.Commands;
 
 namespace AwesomeUI.ViewModel;
 
 public partial class SignInViewModel : BaseViewModel
 {
     private readonly AuthService _authService;
-
+    public DelegateCommand SignInCommand { get; private set; }
+    public DelegateCommand GoToSignUpCommand { get; private set; }
     public SignInViewModel(AuthService authService)
     {
         _authService = authService;
         Title = "Sign In";
+        SignInCommand = new DelegateCommand(async () => await SignInAsync());
+        GoToSignUpCommand = new DelegateCommand(async () => await GoToSignUpAsync());
     }
 
      private string _username = "abcd@abc.com";
@@ -29,7 +33,6 @@ public partial class SignInViewModel : BaseViewModel
          set => SetProperty(ref _password, value);
      }
 
-    [RelayCommand]
     async Task SignInAsync()
     {
         if (IsBusy)
@@ -67,7 +70,6 @@ public partial class SignInViewModel : BaseViewModel
         }
     }
     
-    [RelayCommand]
     async Task GoToSignUpAsync()
     {
         await Shell.Current.Navigation.PushAsync(new SignUpPage());

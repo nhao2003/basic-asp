@@ -4,18 +4,18 @@
     <value>
       <entry key="AwesomeUI">
         <State>
-          <runningDeviceTargetSelectedWithDropDown>
+          <targetSelectedWithDropDown>
             <Target>
-              <type value="RUNNING_DEVICE_TARGET" />
+              <type value="QUICK_BOOT_TARGET" />
               <deviceKey>
                 <Key>
-                  <type value="SERIAL_NUMBER" />
-                  <value value="R58M92248FY" />
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\nhath\.android\avd\Pixel_7_Pro_1.avd" />
                 </Key>
               </deviceKey>
             </Target>
-          </runningDeviceTargetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-06-21T08:22:57.321114600Z" />
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-06-21T10:22:04.614601100Z" />
         </State>
       </entry>
     </value>

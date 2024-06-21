@@ -69,7 +69,6 @@ public class SignUpViewModel: BaseViewModel
                 return;
             }
             
-            // Call the sign up service here
             var error = await _authService.SignUpAsync(new AuthRequest(Username, Password));
             if (error != null)
             {

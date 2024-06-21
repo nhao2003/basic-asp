@@ -33,3 +33,13 @@ This is a C# project using .NET 8.0 and Docker.
    docker-compose up
    ```
 5. Open your browser and navigate to `http://localhost:8000`.
+
+# Awesome UI
+
+![Sign In](./.images/Pic_SignIn.png)
+
+![Sign Up](./.images/Pic_SignUp.png)
+
+![Sign Up](./.images/Pic_Home.png)
+
+![Sign Up](./.images/Pic_Account.png)

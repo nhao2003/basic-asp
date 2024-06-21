@@ -1,5 +1,6 @@
 ﻿using AwesomeUI.Services;
 using AwesomeUI.View;
+using Prism.Commands;
 
 namespace AwesomeUI.ViewModel;
 
@@ -8,12 +9,13 @@ public partial class HomeViewModel : BaseViewModel
     public ObservableCollection<Blog> Blogs { get; } = new();
     private readonly BlogService _blogService;
     private readonly IConnectivity _connectivity;
-
+    public DelegateCommand GetBlogsCommand { get; private set; }
     public HomeViewModel( BlogService blogService, IConnectivity connectivity)
     {
         _blogService = blogService;
         _connectivity = connectivity;
         Title = "Monkey Finder";
+        GetBlogsCommand = new DelegateCommand(async () => await GetBlogsAsync());
     }
 
     private bool _isRefreshing;
@@ -24,7 +26,6 @@ public partial class HomeViewModel : BaseViewModel
         set => SetProperty(ref _isRefreshing, value);
     }
 
-    [RelayCommand]
     public async Task GetBlogsAsync()
     {
         if (IsBusy)
