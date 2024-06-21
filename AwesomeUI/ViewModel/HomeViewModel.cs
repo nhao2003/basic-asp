@@ -3,17 +3,17 @@ using AwesomeUI.View;
 
 namespace AwesomeUI.ViewModel;
 
-public partial class MonkeysViewModel : BaseViewModel
+public partial class HomeViewModel : BaseViewModel
 {
     public ObservableCollection<Blog> Blogs { get; } = new();
     BlogService _blogService;
     IConnectivity connectivity;
 
-    public MonkeysViewModel(BlogService blogService, IConnectivity connectivity)
+    public HomeViewModel( BlogService blogService, IConnectivity connectivity)
     {
-        Title = "Monkey Finder";
-        this._blogService = blogService;
+        _blogService = blogService;
         this.connectivity = connectivity;
+        Title = "Monkey Finder";
     }
 
     [ObservableProperty] bool isRefreshing;
@@ -60,7 +60,7 @@ public partial class MonkeysViewModel : BaseViewModel
         if (monkey == null)
             return;
 
-        await Shell.Current.GoToAsync(nameof(DetailsPage), true, new Dictionary<string, object>
+        await Shell.Current.GoToAsync(nameof(BlogDetailPage), new Dictionary<string, object>
         {
             { "Monkey", monkey }
         });

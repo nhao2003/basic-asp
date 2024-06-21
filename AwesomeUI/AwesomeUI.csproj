@@ -64,13 +64,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <MauiXaml Update="View\MainPage.xaml">
+      <MauiXaml Update="View\HomePage.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="View\MainPage.xaml.cs">
+      <Compile Update="View\HomePage.xaml.cs">
         <DependentUpon>MainPage.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>

@@ -1,11 +1,12 @@
-﻿namespace AwesomeUI;
+﻿using AwesomeUI.View;
+
+namespace AwesomeUI;
 
 public partial class App : Application
 {
     public App()
     {
         InitializeComponent();
-
         MainPage = new AppShell();
     }
 }

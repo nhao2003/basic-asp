@@ -23,13 +23,19 @@ public static class MauiProgram
         builder.Services.AddSingleton(Connectivity.Current);
         builder.Services.AddSingleton(Geolocation.Default);
         builder.Services.AddSingleton(Map.Default);
-		
+        
+		      
         builder.Services.AddSingleton<BlogService>();
-        builder.Services.AddSingleton<MonkeysViewModel>();
-        builder.Services.AddSingleton<MainPage>();
-
-        builder.Services.AddTransient<MonkeyDetailsViewModel>();
-        builder.Services.AddTransient<DetailsPage>();
+        builder.Services.AddSingleton<HomeViewModel>();
+        builder.Services.AddSingleton<HomePage>();
+        
+        builder.Services.AddTransient<BlogDetailViewModel>();
+        builder.Services.AddTransient<BlogDetailPage>();
+        builder.Services.AddSingleton<HttpClient>();
+        builder.Services.AddSingleton<AuthService>();
+        builder.Services.AddTransient<SignInViewModel>();
+        builder.Services.AddTransient<SignInPage>();
+        
 
         return builder.Build();
     }

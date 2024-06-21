@@ -1,11 +1,10 @@
 ﻿namespace AwesomeUI.View;
 
-public partial class MainPage : ContentPage
+public partial class BlogDetailPage : ContentPage
 {
-    public MainPage(MonkeysViewModel viewModel)
+    public BlogDetailPage(BlogDetailViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = viewModel;
     }
 }
-

@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    x:Class="AwesomeUI.View.BlogDetailPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodel="clr-namespace:AwesomeUI.ViewModel"
+    Title="{Binding Blog.Title}"
+    x:DataType="viewmodel:BlogDetailViewModel">
+    
+    <ContentPage.BindingContext >
+        <viewmodel:BlogDetailViewModel />
+    </ContentPage.BindingContext>
+    <ScrollView>
+        <Grid RowDefinitions="Auto,Auto,*">
+            <Image
+                Aspect="AspectFill"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Source="{Binding Blog.Thumbnail}"
+                Margin="10" />
+            <StackLayout
+                Grid.Row="1"
+                Padding="10"
+                Spacing="10">
+                <Label
+                    Style="{StaticResource LargeLabel}"
+                    Text="{Binding Blog.Title}"
+                    FontAttributes="Bold" />
+
+                <Grid ColumnDefinitions="*,*">
+                    <Label
+                        Grid.Column="0"
+
+                        Style="{StaticResource SmallLabel}"
+                        Text="{Binding Blog.CreatedAt, StringFormat='Published: {0:MM/dd/yyyy}'}"
+                        HorizontalOptions="Start" />
+                    <Label
+                        Grid.Column="1"
+                        Style="{StaticResource MediumLabel}"
+                        Text="{Binding Blog.Author, StringFormat='Author: {0}'}"
+                        HorizontalOptions="End"
+                        Margin="0,0,0,8"
+                        FontAttributes="Italic"
+                        FontSize="14" />
+                </Grid>
+                <Label
+                    Style="{StaticResource MediumLabel}"
+                    Text="{Binding Blog.Description, StringFormat='Description: {0}'}" />
+                <Label
+                    TextType="Html"
+                    Text="{Binding Blog.Content}" />
+            </StackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

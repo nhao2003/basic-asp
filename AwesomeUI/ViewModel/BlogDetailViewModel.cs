@@ -1,14 +1,8 @@
 ﻿namespace AwesomeUI.ViewModel;
 
 [QueryProperty(nameof(Blog), "Monkey")]
-public partial class MonkeyDetailsViewModel : BaseViewModel
+public partial class BlogDetailViewModel : BaseViewModel
 {
-    readonly IMap _map;
-    public MonkeyDetailsViewModel(IMap map)
-    {
-        this._map = map;
-    }
-
     [ObservableProperty]
     Blog _blog;
 
