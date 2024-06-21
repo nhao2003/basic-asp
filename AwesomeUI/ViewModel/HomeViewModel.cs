@@ -6,27 +6,33 @@ namespace AwesomeUI.ViewModel;
 public partial class HomeViewModel : BaseViewModel
 {
     public ObservableCollection<Blog> Blogs { get; } = new();
-    BlogService _blogService;
-    IConnectivity connectivity;
+    private readonly BlogService _blogService;
+    private readonly IConnectivity _connectivity;
 
     public HomeViewModel( BlogService blogService, IConnectivity connectivity)
     {
         _blogService = blogService;
-        this.connectivity = connectivity;
+        _connectivity = connectivity;
         Title = "Monkey Finder";
     }
 
-    [ObservableProperty] bool isRefreshing;
+    private bool _isRefreshing;
+    
+    public bool IsRefreshing
+    {
+        get => _isRefreshing;
+        set => SetProperty(ref _isRefreshing, value);
+    }
 
     [RelayCommand]
-    async Task GetMonkeysAsync()
+    public async Task GetBlogsAsync()
     {
         if (IsBusy)
             return;
 
         try
         {
-            if (connectivity.NetworkAccess != NetworkAccess.Internet)
+            if (_connectivity.NetworkAccess != NetworkAccess.Internet)
             {
                 await Shell.Current.DisplayAlert("No connectivity!",
                     $"Please check internet and try again.", "OK");

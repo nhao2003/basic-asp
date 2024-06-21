@@ -3,14 +3,9 @@ using AwesomeUI.DTO.Auth;
 
 namespace AwesomeUI.Services;
 
-public class AuthService
+public class AuthService(HttpClient httpClient) : BaseService(httpClient)
 {
-    private readonly HttpClient _httpClient;
     
-    public AuthService(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
     
     private string? _accessToken;
     private string? _refreshToken;
@@ -20,12 +15,12 @@ public class AuthService
     
     public async Task<bool> SignInAsync(AuthRequest authRequest)
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, "http://10.0.2.2:8000/api/Auth/signin");
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/Auth/signin");
         var json = JsonSerializer.Serialize(authRequest);
         request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         try
         {
-            var response = await _httpClient.SendAsync(request);
+            var response = await httpClient.SendAsync(request);
             var body = await response.Content.ReadAsStringAsync();
             Debug.WriteLine($"Response: {body}");
 

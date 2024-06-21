@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Awesome.DTOs.User;
+namespace AwesomeUI.DTO.User;
 
 public class UpdateProfileDto
 {

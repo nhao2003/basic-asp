@@ -8,8 +8,16 @@ namespace AwesomeUI.View;
 
 public partial class AccountPage : ContentPage
 {
-    public AccountPage()
+    private AccountViewModel? ViewModel => BindingContext as AccountViewModel;
+    public AccountPage(AccountViewModel viewModel)
     {
         InitializeComponent();
+        BindingContext = viewModel;
+    }
+    
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        ViewModel?.GetUser();
     }
 }

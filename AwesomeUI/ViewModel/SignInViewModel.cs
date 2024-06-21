@@ -14,8 +14,20 @@ public partial class SignInViewModel : BaseViewModel
         Title = "Sign In";
     }
 
-    [ObservableProperty] private string _username = "abcd@abc.com";
-    [ObservableProperty] private string _password = "12345678";
+     private string _username = "abcd@abc.com";
+     private string _password = "12345678";
+     
+     public string Username
+     {
+         get => _username;
+         set => SetProperty(ref _username, value);
+     }
+     
+     public string Password
+     {
+         get => _password;
+         set => SetProperty(ref _password, value);
+     }
 
     [RelayCommand]
     async Task SignInAsync()

@@ -18,7 +18,7 @@
         RowSpacing="0">
         <RefreshView
             Grid.ColumnSpan="2"
-            Command="{Binding GetMonkeysCommand}"
+            Command="{Binding GetBlogsCommand}"
             IsRefreshing="{Binding IsRefreshing}">
             <ContentView>
                 <CollectionView
@@ -57,24 +57,7 @@
                 </CollectionView>
             </ContentView>
         </RefreshView>
-
-        <Button
-            Grid.Row="1"
-            Grid.Column="0"
-            Margin="8"
-            Command="{Binding GetMonkeysCommand}"
-            IsEnabled="{Binding IsNotBusy}"
-            Style="{StaticResource ButtonOutline}"
-            Text="Get Blogs" />
-        <!-- <Button -->
-        <!--     Grid.Row="1" -->
-        <!--     Grid.Column="1" -->
-        <!--     Margin="8" -->
-        <!--     Command="{Binding GetClosestMonkeyCommand}" -->
-        <!--     IsEnabled="{Binding IsNotBusy}" -->
-        <!--     Style="{StaticResource ButtonOutline}" -->
-        <!--     Text="Find Closest" /> -->
-
+        
 
         <ActivityIndicator
             Grid.RowSpan="2"

@@ -92,6 +92,7 @@ namespace Awesome.Services.UserService
             }
 
             user.FullName = updateProfileDto.FullName;
+            user.DateOfBirth = updateProfileDto.DateOfBirth;
             context.Users.Update(user);
             await context.SaveChangesAsync();
 

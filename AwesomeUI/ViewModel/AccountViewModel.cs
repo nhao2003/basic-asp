@@ -1,43 +1,88 @@
 ﻿using System;
 using System.Windows.Input;
-using Microsoft.Maui.Controls;
+using AwesomeUI.DTO.User;
+using AwesomeUI.Services;
+using Prism.Commands;
 
 namespace AwesomeUI.ViewModel
 {
-    public class AccountViewModel : BaseViewModel
+    public partial class AccountViewModel : BaseViewModel
     {
-        private bool _gender;
-        private DateTime _birthDate;
-        private string _fullName;
+        private DateTime? _birthDate;
+        private string? _fullName;
+        public DelegateCommand UpdateAccountCommand { get; private set; }
+        private UserService _userService;
 
-        public AccountViewModel()
+        public AccountViewModel(UserService userService)
         {
-            UpdateAccountCommand = new Command(OnUpdateAccount);
+            _userService = userService;
+            Title = "Account";
+            UpdateAccountCommand = new DelegateCommand(async () => await UpdateAccount());
         }
 
-        public bool Gender
-        {
-            get => _gender;
-            set => SetProperty(ref _gender, value);
-        }
-
-        public DateTime BirthDate
+        public DateTime? BirthDate
         {
             get => _birthDate;
             set => SetProperty(ref _birthDate, value);
         }
 
-        public string FullName
+        public string? FullName
         {
             get => _fullName;
             set => SetProperty(ref _fullName, value);
         }
 
-        public ICommand UpdateAccountCommand { get; }
-
-        private void OnUpdateAccount()
+        async Task UpdateAccount()
         {
-            // Logic to update account information goes here
+            try
+            {
+                IsBusy = true;
+                var user = new UpdateProfileDto()
+                {
+                    FullName = FullName ?? string.Empty,
+                    DateOfBirth = DateOnly.FromDateTime(BirthDate ?? DateTime.Now)
+                };
+
+                var response = await _userService.UpdateUserAsync(user);
+
+                if (response)
+                {
+                    await Shell.Current.DisplayAlert("Success!", "Profile updated successfully.", "OK");
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Error!", "Unable to update profile.", "OK");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        public async Task GetUser()
+        {
+            try
+            {
+                IsBusy = true;
+                var user = await _userService.GetUserAsync();
+                FullName = user?.FullName;
+                BirthDate = user?.DateOfBirth;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
     }
 }
