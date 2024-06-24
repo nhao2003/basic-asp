@@ -1,4 +1,4 @@
-﻿namespace Awesome.DTOs;
+﻿namespace Awesome.DTOs.Category;
 
 public class CreateCategoryRequestDto
 {

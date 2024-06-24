@@ -1,13 +1,20 @@
 ﻿using Awesome.Data;
+using Awesome.DTOs.Category;
 using Microsoft.EntityFrameworkCore;
 
 namespace Awesome.Services.Category;
+
 using Models.Entities;
 
 public class CategoryService(ApplicationDbContext dbContext) : ICategoryService
 {
-    public async Task<Category> CreateAsync(Category category)
+    public async Task<Category> CreateAsync(CreateCategoryRequestDto request)
     {
+        var category = new Category()
+        {
+            Name = request.Name,
+        };
+
         await dbContext.Categories.AddAsync(category);
         await dbContext.SaveChangesAsync();
 
@@ -44,8 +51,6 @@ public class CategoryService(ApplicationDbContext dbContext) : ICategoryService
             categories = categories.Where(x => x.Name.Contains(query));
         }
 
-
-        // Sorting
         if (string.IsNullOrWhiteSpace(sortBy) == false)
         {
             if (string.Equals(sortBy, "Name", StringComparison.OrdinalIgnoreCase))
@@ -55,7 +60,6 @@ public class CategoryService(ApplicationDbContext dbContext) : ICategoryService
 
                 categories = isAsc ? categories.OrderBy(x => x.Name) : categories.OrderByDescending(x => x.Name);
             }
-
         }
 
         var skipResults = (pageNumber - 1) * pageSize;
@@ -74,14 +78,14 @@ public class CategoryService(ApplicationDbContext dbContext) : ICategoryService
         return await dbContext.Categories.CountAsync();
     }
 
-    public async Task<Category?> UpdateAsync(Category category)
+    public async Task<Category?> UpdateAsync(Guid id, UpdateCategoryRequestDto request)
     {
-        var existingCategory = await dbContext.Categories.FirstOrDefaultAsync(x => x.Id == category.Id);
+        var existingCategory = await dbContext.Categories.FirstOrDefaultAsync(x => x.Id == id);
 
         if (existingCategory == null) return null;
-        dbContext.Entry(existingCategory).CurrentValues.SetValues(category);
+        existingCategory.Name = request.Name;
+        dbContext.Entry(existingCategory).CurrentValues.SetValues(existingCategory);
         await dbContext.SaveChangesAsync();
-        return category;
-
+        return existingCategory;
     }
 }
