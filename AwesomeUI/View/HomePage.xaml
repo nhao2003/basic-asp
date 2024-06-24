@@ -7,10 +7,15 @@
     xmlns:model="clr-namespace:AwesomeUI.Model"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:viewmodel="using:AwesomeUI.ViewModel"
+    xmlns:converters="clr-namespace:AwesomeUI.Converters"
     ios:Page.UseSafeArea="True"
     Title="Blogs"
     x:DataType="viewmodel:HomeViewModel">
-
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CategoryArrayToStringConverter x:Key="CategoryArrayToStringConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <Grid
         ColumnDefinitions="*,*"
         ColumnSpacing="5"
@@ -27,7 +32,7 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="model:Blog">
                             <Grid Padding="10">
-                                <Frame HeightRequest="125" Style="{StaticResource CardView}">
+                                <Frame HeightRequest="150" Style="{StaticResource CardView}">
                                     <Frame.GestureRecognizers>
                                         <TapGestureRecognizer
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:HomeViewModel}}, Path=GoToDetailsCommand}"
@@ -36,7 +41,7 @@
                                     <Grid Padding="0" ColumnDefinitions="125,*">
                                         <Image
                                             Aspect="AspectFill"
-                                            HeightRequest="125"
+                                            HeightRequest="150"
                                             Source="{Binding Thumbnail}"
                                             WidthRequest="125" />
                                         <VerticalStackLayout
@@ -48,6 +53,8 @@
                                                    LineBreakMode="TailTruncation" MaxLines="3" />
                                             <Label Style="{StaticResource SmallLabel}"
                                                    Text="{Binding CreatedAt, StringFormat='{0:MM/dd/yyyy}'}" />
+                                            <Label Style="{StaticResource SmallLabel}"
+                                                   Text="{Binding Categories, Converter={StaticResource CategoryArrayToStringConverter}}" />
                                         </VerticalStackLayout>
                                     </Grid>
                                 </Frame>
@@ -57,7 +64,7 @@
                 </CollectionView>
             </ContentView>
         </RefreshView>
-        
+
 
         <ActivityIndicator
             Grid.RowSpan="2"

@@ -14,7 +14,7 @@ public partial class HomeViewModel : BaseViewModel
     {
         _blogService = blogService;
         _connectivity = connectivity;
-        Title = "Monkey Finder";
+        Title = "Blog";
         GetBlogsCommand = new DelegateCommand(async () => await GetBlogsAsync());
     }
 

@@ -1,6 +1,7 @@
 ﻿using Awesome.Data;
 using Awesome.DTOs;
 using Awesome.DTOs.Blog;
+using Awesome.Helper;
 using Awesome.Models.Entities;
 using Awesome.Services.Category;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +10,23 @@ namespace Awesome.Services.BlogService
 {
     public class BlogService(ApplicationDbContext context, ICategoryService categoryService) : IBlogService
     {
-        public async Task<IEnumerable<Blog>> GetBlogs()
+        public async Task<IEnumerable<Blog>> GetBlogs(QueryObject query)
         {
-            return await context.Blogs.Include(
+            var blogs = context.Blogs.Include(
                 x => x.Categories
-            ).ToListAsync();
+            ).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query.SortBy))
+            {
+                if (query.SortBy.Equals("CreatedAt", StringComparison.OrdinalIgnoreCase))
+                {
+                    blogs = query.IsDescending ? blogs.OrderByDescending(s => s.CreatedAt) : blogs.OrderBy(s => s.CreatedAt);
+                }
+            }
+
+            var skipNumber = (query.PageNumber - 1) * query.PageSize;
+            
+            return await blogs.Skip(skipNumber).Take(query.PageSize).ToListAsync();
         }
 
         public async Task<Blog?> GetBlog(Guid id)

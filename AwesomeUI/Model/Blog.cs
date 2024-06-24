@@ -23,6 +23,9 @@ public class Blog
     [JsonPropertyName("content")]
     public required string Content { get; set; }
     
+    [JsonPropertyName("categories")]
+    public required Category[] Categories { get; set; }
+    
     [JsonPropertyName("createdAt")]
     public required DateTime CreatedAt { get; set; }
     

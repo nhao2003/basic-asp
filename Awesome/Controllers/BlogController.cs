@@ -2,6 +2,7 @@
 using Awesome.Data;
 using Awesome.DTOs;
 using Awesome.DTOs.Blog;
+using Awesome.Helper;
 using Awesome.Services.BlogService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +15,13 @@ namespace Awesome.Controllers
     public class BlogController(IBlogService blogService, IMapper mapper) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAsync([FromQuery] QueryObject query)
         {
-            var blogs = await blogService.GetBlogs();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var blogs = await blogService.GetBlogs(query);
             return Ok(blogs.Select(mapper.Map<BlogResponseDto>));
         }
 
