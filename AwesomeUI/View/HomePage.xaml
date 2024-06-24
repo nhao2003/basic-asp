@@ -13,7 +13,6 @@
     x:DataType="viewmodel:HomeViewModel">
     <ContentPage.ToolbarItems>
         <ToolbarItem IconImageSource="notification_icon.svg" Text="Notification"/>
-        <ToolbarItem Text="Save" />
     </ContentPage.ToolbarItems>
     <ContentPage.Resources>
         <ResourceDictionary>
