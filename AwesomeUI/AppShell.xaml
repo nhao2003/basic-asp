@@ -35,7 +35,7 @@
         Route="SignInPage" />
     <TabBar Route="MainPage">
         <ShellContent Title="Home" ContentTemplate="{DataTemplate view:HomePage}" Route="HomePage" Icon="home_icon.svg" />
-        <ShellContent Title="Account" ContentTemplate="{DataTemplate view:AccountPage}" Route="AccountPage" Icon="account_icon.png" />
+        <ShellContent Title="Setting" ContentTemplate="{DataTemplate view:SettingPage}" Route="SettingPage" Icon="setting_icon.png" />
     </TabBar>
 
 </Shell>

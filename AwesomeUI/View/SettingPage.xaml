@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AwesomeUI.ViewModel"
+             xmlns:view="clr-namespace:AwesomeUI.View"
+             x:DataType="vm:SettingViewModel"
+             x:Class="AwesomeUI.View.SettingPage">
+    <ContentPage.Content>
+        <ListView ItemsSource="{Binding Settings}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="vm:SettingItem">
+                    <ViewCell>
+                        <Grid Padding="10,5" BackgroundColor="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Column="0" Source="{Binding Icon}" WidthRequest="24" HeightRequest="24"
+                                   VerticalOptions="Center" Margin="0,0,10,0" />
+                            <Label Grid.Column="1" Text="{Binding Title}" VerticalOptions="Center"
+                                   HorizontalOptions="Start" Style="{StaticResource MediumLabel}" />
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:SettingPage}}, Path=BindingContext.TappedCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </ContentPage.Content>
+</ContentPage>

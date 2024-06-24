@@ -42,6 +42,8 @@ public static class MauiProgram
         
         builder.Services.AddTransient<SignUpViewModel>();
         
+        builder.Services.AddSingleton<SettingViewModel>();
+        builder.Services.AddSingleton<SettingPage>();
 
         return builder.Build();
     }
