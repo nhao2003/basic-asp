@@ -15,6 +15,7 @@ namespace Awesome.Profiles
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author))
                 .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.Categories))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt));
         }

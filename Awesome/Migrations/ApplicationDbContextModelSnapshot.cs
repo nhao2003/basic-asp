@@ -59,6 +59,21 @@ namespace Awesome.Migrations
                     b.ToTable("Blogs");
                 });
 
+            modelBuilder.Entity("Awesome.Models.Entities.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("Awesome.Models.Entities.Session", b =>
                 {
                     b.Property<Guid>("Id")
@@ -137,6 +152,21 @@ namespace Awesome.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("BlogCategory", b =>
+                {
+                    b.Property<Guid>("BlogsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CategoriesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("BlogsId", "CategoriesId");
+
+                    b.HasIndex("CategoriesId");
+
+                    b.ToTable("BlogCategory");
+                });
+
             modelBuilder.Entity("Awesome.Models.Entities.Session", b =>
                 {
                     b.HasOne("Awesome.Models.Entities.User", "User")
@@ -146,6 +176,21 @@ namespace Awesome.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BlogCategory", b =>
+                {
+                    b.HasOne("Awesome.Models.Entities.Blog", null)
+                        .WithMany()
+                        .HasForeignKey("BlogsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Awesome.Models.Entities.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

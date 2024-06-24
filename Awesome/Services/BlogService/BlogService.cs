@@ -2,20 +2,25 @@
 using Awesome.DTOs;
 using Awesome.DTOs.Blog;
 using Awesome.Models.Entities;
+using Awesome.Services.Category;
 using Microsoft.EntityFrameworkCore;
 
 namespace Awesome.Services.BlogService
 {
-    public class BlogService(ApplicationDbContext context) : IBlogService
+    public class BlogService(ApplicationDbContext context, ICategoryService categoryService) : IBlogService
     {
         public async Task<IEnumerable<Blog>> GetBlogs()
         {
-            return await context.Blogs.ToListAsync();
+            return await context.Blogs.Include(
+                x => x.Categories
+            ).ToListAsync();
         }
 
         public async Task<Blog?> GetBlog(Guid id)
         {
-            return await context.Blogs.FindAsync(id);
+            return await context.Blogs.Include(
+                x => x.Categories
+            ).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<Blog> CreateBlog(CreateBlogDto data)
@@ -27,10 +32,22 @@ namespace Awesome.Services.BlogService
                 Thumbnail = data.Thumbnail,
                 Author = data.Author,
                 Content = data.Content,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                Categories = new List<Models.Entities.Category>()
             };
+            await using var transaction = await context.Database.BeginTransactionAsync();
+            foreach (var categoryId in data.Categories)
+            {
+                var category = await context.Categories.FindAsync(categoryId);
+                if (category != null)
+                {
+                    blog.Categories.Add(category);
+                }
+            }
+
             context.Blogs.Add(blog);
             await context.SaveChangesAsync();
+            transaction.Commit();
             return blog;
         }
 
@@ -41,6 +58,7 @@ namespace Awesome.Services.BlogService
             {
                 return null;
             }
+
             blogToUpdate.Title = blog.Title ?? blogToUpdate.Title;
             blogToUpdate.Description = blog.Description ?? blogToUpdate.Description;
             blogToUpdate.Thumbnail = blog.Thumbnail ?? blogToUpdate.Thumbnail;
@@ -59,6 +77,7 @@ namespace Awesome.Services.BlogService
             {
                 return null;
             }
+
             context.Blogs.Remove(blogToDelete);
             await context.SaveChangesAsync();
             return blogToDelete;

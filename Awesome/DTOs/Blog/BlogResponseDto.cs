@@ -1,4 +1,6 @@
-﻿namespace Awesome.DTOs.Blog;
+﻿using Awesome.DTOs.Category;
+
+namespace Awesome.DTOs.Blog;
 
 public class BlogResponseDto
 {
@@ -8,6 +10,7 @@ public class BlogResponseDto
     public string Thumbnail { get; set; }
     public string Author { get; set; }
     public string Content { get; set; }
+    public List<CategoryDto> Categories { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }

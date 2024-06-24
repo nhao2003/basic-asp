@@ -21,5 +21,7 @@ namespace Awesome.DTOs.Blog
         [Required]
         [DataType(DataType.MultilineText)]
         public string Content { get; set; }
+
+        public Guid[] Categories { get; set; }
     }
 }

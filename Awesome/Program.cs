@@ -9,6 +9,7 @@ using AutoMapper;
 using Awesome.Middlewares;
 using Awesome.Profiles;
 using Awesome.Services.BlogService;
+using Awesome.Services.Category;
 using Awesome.Services.MailService;
 using Awesome.Services.SmsService;
 using Awesome.Services.UserService;
@@ -62,6 +63,7 @@ builder.Services.AddTransient<ISmsService, VonageSmsMessage>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IBlogService, BlogService>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<JwtBearerHandler, JwtAuthenticationHandler>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddScheme<JwtBearerOptions, JwtAuthenticationHandler>(JwtBearerDefaults.AuthenticationScheme,
