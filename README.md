@@ -38,7 +38,7 @@ This is a C# project using .NET 8.0 and Docker.
 
 <p float="left">
   <img src="./.images/Pic_SplashScreen1.png" width="100" />
-  <img src="./.images/Pic_SplashScreen2.png.png" width="100" /> 
+  <img src="./.images/Pic_SplashScreen2.png" width="100" /> 
   <img src="./.images/Pic_SignIn.png" width="100" />
   <img src="./.images/Pic_SignUp.png" width="100" /> 
   <img src="./.images/Pic_Home.png" width="100" />
