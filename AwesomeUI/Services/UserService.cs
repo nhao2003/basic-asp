@@ -1,5 +1,6 @@
 ﻿
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using AwesomeUI.DTO.User;
 
@@ -30,6 +31,24 @@ public class UserService(HttpClient httpClient, AuthService authService) : BaseS
         request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         
         var response = await HttpClient.SendAsync(request);
+        return response.IsSuccessStatusCode;
+    }
+    
+    public async Task<bool> UploadProfilePictureAsync(FileResult fileResult)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Put, $"{BaseUrl}/User/avatar");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
+        // Set content type to multipart/form-data
+        var fileContent = new StreamContent(await fileResult.OpenReadAsync());
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue(fileResult.ContentType);
+        var formData = new MultipartFormDataContent
+        {
+            { fileContent, "file", fileResult.FileName }
+        };
+        request.Content = formData;
+        var response = await HttpClient.SendAsync(request);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        Console.WriteLine(responseContent);
         return response.IsSuccessStatusCode;
     }
 }

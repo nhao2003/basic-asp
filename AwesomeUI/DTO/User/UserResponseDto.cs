@@ -11,6 +11,8 @@ public class UserResponseDto
     public string? PhoneNumber { get; set; }
     [JsonPropertyName("fullName")]
     public string? FullName { get; set; }
+    [JsonPropertyName("avatar")]
+    public string? Avatar { get; set; }
     [JsonPropertyName("dateOfBirth")]
     public DateTime? DateOfBirth { get; set; }
     [JsonPropertyName("emailVerified")]

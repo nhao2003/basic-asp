@@ -9,14 +9,14 @@ namespace AwesomeUI.ViewModel
         private DateTime? _birthDate;
         private string? _fullName;
         public DelegateCommand UpdateAccountCommand { get; private set; }
-        private UserService _userService;
+        private readonly UserService _userService;
 
         public AccountViewModel(UserService userService)
         {
             _userService = userService;
             Title = "Account";
             UpdateAccountCommand = new DelegateCommand(async () => await UpdateAccount());
-            UploadProfilePictureCommand = new DelegateCommand(async () => await UploadProfilePicture());
+            PickImageCommand = new DelegateCommand(async () => await PickImage());
             OpenCameraCommand = new DelegateCommand(async () => await OpenCamera());
         }
 
@@ -73,6 +73,7 @@ namespace AwesomeUI.ViewModel
                 var user = await _userService.GetUserAsync();
                 FullName = user?.FullName;
                 BirthDate = user?.DateOfBirth ?? DateTime.FromOADate(0);
+                ProfilePicture = user?.Avatar  == null ? null : ImageSource.FromUri(new Uri(user.Avatar));
             }
             catch (Exception e)
             {
@@ -86,22 +87,52 @@ namespace AwesomeUI.ViewModel
         }
 
 
-        private ImageSource _profilePicture;
+        private ImageSource? _profilePicture;
 
-        public ImageSource ProfilePicture
+        public ImageSource? ProfilePicture
         {
             get => _profilePicture;
             set => SetProperty(ref _profilePicture, value);
         }
 
-        public DelegateCommand UploadProfilePictureCommand { get; private set; }
+        public DelegateCommand PickImageCommand { get; private set; }
         
         public DelegateCommand OpenCameraCommand { get; private set; }
     
+        private bool _isUploadingImage = false;
+        
+        public bool IsUploadingImage
+        {
+            get => _isUploadingImage;
+            set => SetProperty(ref _isUploadingImage, value);
+        }
+       private async Task UploadImage(FileResult file)
+        {
+            try
+            {
+                IsUploadingImage = true;
+                var response = await _userService.UploadProfilePictureAsync(file);
+                if (response)
+                {
+                    await Shell.Current.DisplayAlert("Success!", "Image uploaded successfully.", "OK");
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Error!", "Unable to upload image.", "OK");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                IsUploadingImage = false;
+            }
+        }
 
-        // Other methods...
-
-        async Task UploadProfilePicture()
+        async Task PickImage()
         {
             try
             {
@@ -119,6 +150,9 @@ namespace AwesomeUI.ViewModel
 
                     // Set the selected image to ProfilePicture property
                     ProfilePicture = ImageSource.FromStream(() => stream);
+                    
+                    // Upload the selected image
+                    await UploadImage(result);
                 }
             }
             catch (Exception ex)
@@ -147,6 +181,9 @@ namespace AwesomeUI.ViewModel
 
                     // Set the taken image to ProfilePicture property
                     ProfilePicture = ImageSource.FromStream(() => stream);
+                    
+                    // Upload the taken image
+                    await UploadImage(result);
                 }
             }
             catch (Exception ex)

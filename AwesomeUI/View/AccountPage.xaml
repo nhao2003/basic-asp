@@ -7,9 +7,9 @@
     <ContentPage.Content>
         <StackLayout Padding="20" Spacing="10">
             <Image Source="{Binding ProfilePicture}" WidthRequest="100" HeightRequest="100" Margin="0,0,0,10" />
-            <!-- <Button Text="Upload Picture" Command="{Binding UploadProfilePictureCommand}" Margin="0,0,0,10" /> -->
-            <StackLayout Orientation="Horizontal" Spacing="10">
-                <Button Text="Upload Picture" Command="{Binding UploadProfilePictureCommand}" Margin="0,0,0,10" />
+            <ActivityIndicator IsRunning="{Binding IsUploadingImage}" IsVisible="{Binding IsUploadingImage}" />
+            <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center" VerticalOptions="Center" >
+                <Button Text="Upload Picture" Command="{Binding PickImageCommand}" Margin="0,0,0,10" />
                 <Button Text="Open Camera" Command="{Binding OpenCameraCommand}" Margin="0,0,0,10" />
             </StackLayout>
             <Entry Placeholder="Full Name" Text="{Binding FullName}" Margin="0,0,0,10" />
