@@ -12,6 +12,7 @@ public class AuthService(HttpClient httpClient) : BaseService(httpClient)
     private string? _refreshToken;
     
     public string? AccessToken => _accessToken;
+
     public string? RefreshToken => _refreshToken;
     
     public async Task<bool> SignInAsync(AuthRequest authRequest)
@@ -32,6 +33,8 @@ public class AuthService(HttpClient httpClient) : BaseService(httpClient)
             _refreshToken = authResponse.RefreshToken;
             Debug.WriteLine($"Access Token: {_accessToken}");
             Debug.WriteLine($"Refresh Token: {_refreshToken}");
+            await SecureStorage.SetAsync("AccessToken", _accessToken);
+            if (_refreshToken != null) await SecureStorage.SetAsync("RefreshToken", _refreshToken);
             return true;
         }
         catch (Exception e)
@@ -62,11 +65,40 @@ public class AuthService(HttpClient httpClient) : BaseService(httpClient)
             _refreshToken = content.RefreshToken;
             Debug.WriteLine($"Access Token: {_accessToken}");
             Debug.WriteLine($"Refresh Token: {_refreshToken}");
+            await SecureStorage.SetAsync("AccessToken", _accessToken);
+            if (_refreshToken != null) await SecureStorage.SetAsync("RefreshToken", _refreshToken);
             return null;
         }
         catch (Exception e)
         {
             Debug.WriteLine($"Unable to sign up: {e}");
+            throw;
+        }
+    }
+    
+    public async Task<bool> RefreshTokenAsync()
+    {
+        var refreshToken = await SecureStorage.GetAsync("RefreshToken");
+        if (refreshToken == null) return false;
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/Auth/refresh");
+        var json = JsonSerializer.Serialize(new { refreshToken });
+        request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+        try
+        {
+            var response = await httpClient.SendAsync(request);
+            var body = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"Response: {body}");
+
+            if (!response.IsSuccessStatusCode) return false;
+            var responseStream = await response.Content.ReadAsStreamAsync();
+            var authResponse = await JsonSerializer.DeserializeAsync<AuthResponse>(responseStream);
+            _accessToken = authResponse?.AccessToken;
+            if (_accessToken != null) await SecureStorage.SetAsync("AccessToken", _accessToken);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"Unable to refresh token: {e}");
             throw;
         }
     }

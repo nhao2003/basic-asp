@@ -44,6 +44,9 @@ public static class MauiProgram
         
         builder.Services.AddSingleton<SettingViewModel>();
         builder.Services.AddSingleton<SettingPage>();
+        
+        builder.Services.AddSingleton<SplashViewModel>();
+        builder.Services.AddSingleton<SplashPage>();
 
         return builder.Build();
     }
