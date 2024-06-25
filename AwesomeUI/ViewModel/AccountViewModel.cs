@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows.Input;
-using AwesomeUI.DTO.User;
+﻿using AwesomeUI.DTO.User;
 using AwesomeUI.Services;
 using Prism.Commands;
 
@@ -18,6 +16,8 @@ namespace AwesomeUI.ViewModel
             _userService = userService;
             Title = "Account";
             UpdateAccountCommand = new DelegateCommand(async () => await UpdateAccount());
+            UploadProfilePictureCommand = new DelegateCommand(async () => await UploadProfilePicture());
+            OpenCameraCommand = new DelegateCommand(async () => await OpenCamera());
         }
 
         public DateTime? BirthDate
@@ -82,6 +82,77 @@ namespace AwesomeUI.ViewModel
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+
+        private ImageSource _profilePicture;
+
+        public ImageSource ProfilePicture
+        {
+            get => _profilePicture;
+            set => SetProperty(ref _profilePicture, value);
+        }
+
+        public DelegateCommand UploadProfilePictureCommand { get; private set; }
+        
+        public DelegateCommand OpenCameraCommand { get; private set; }
+    
+
+        // Other methods...
+
+        async Task UploadProfilePicture()
+        {
+            try
+            {
+                // Open file picker to select image
+                var result = await MediaPicker.PickPhotoAsync(new MediaPickerOptions
+                {
+                    Title = "Please pick a photo"
+                });
+
+                // Check if an image was selected
+                if (result != null)
+                {
+                    // Open a stream to the selected file
+                    var stream = await result.OpenReadAsync();
+
+                    // Set the selected image to ProfilePicture property
+                    ProfilePicture = ImageSource.FromStream(() => stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle error here
+                Console.WriteLine($"PickPhotoAsync THREW: {ex.Message}");
+            }
+        }
+
+        private async Task OpenCamera()
+        {
+            try
+            {
+                // Open camera to take a photo
+                var options = new MediaPickerOptions()
+                {
+                    Title = "Please take a photo",
+                };
+                var result = await MediaPicker.CapturePhotoAsync(options);
+
+                // Check if an image was taken
+                if (result != null)
+                {
+                    // Open a stream to the taken photo
+                    var stream = await result.OpenReadAsync();
+
+                    // Set the taken image to ProfilePicture property
+                    ProfilePicture = ImageSource.FromStream(() => stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle error here
+                Console.WriteLine($"CapturePhotoAsync THREW: {ex.Message}");
             }
         }
     }

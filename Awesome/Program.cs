@@ -10,10 +10,12 @@ using Awesome.Middlewares;
 using Awesome.Profiles;
 using Awesome.Services.BlogService;
 using Awesome.Services.Category;
+using Awesome.Services.FileUploadService;
 using Awesome.Services.MailService;
 using Awesome.Services.SmsService;
 using Awesome.Services.UserService;
 using Awesome.Utils;
+using CloudinaryDotNet;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
 
@@ -57,6 +59,15 @@ builder.Services.Configure<MailKitEmailSenderOptions>(options =>
     options.Sender_EMail = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderEmail"];
     options.Sender_Name = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderName"];
 });
+var account = new Account(
+    builder.Configuration["ExternalProviders:Cloudinary:CloudName"],
+    builder.Configuration["ExternalProviders:Cloudinary:ApiKey"],
+    builder.Configuration["ExternalProviders:Cloudinary:ApiSecret"]
+);
+var cloudinary = new Cloudinary(account);
+
+builder.Services.AddSingleton(cloudinary);
+
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddTransient<IEmailSender, MailKitEmailSender>();
 builder.Services.AddTransient<ISmsService, VonageSmsMessage>();
@@ -68,6 +79,7 @@ builder.Services.AddTransient<JwtBearerHandler, JwtAuthenticationHandler>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddScheme<JwtBearerOptions, JwtAuthenticationHandler>(JwtBearerDefaults.AuthenticationScheme,
         options => { options.Events = new JwtAuthenticationBearEvent(); });
+builder.Services.AddTransient<IFileUploadService, FileUploadService>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

@@ -14,7 +14,11 @@ public class UserProfile : Profile
                 dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber)
             ).ForMember(
                 dest => dest.FullName, opt => opt.MapFrom(src => src.FullName)
-            ).ForMember(
+            )
+            .ForMember(
+                dest => dest.Avatar, opt => opt.MapFrom(src => src.Avatar)
+            )
+            .ForMember(
                 dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth)
             )
             .ForMember(

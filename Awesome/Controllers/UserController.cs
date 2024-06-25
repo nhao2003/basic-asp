@@ -55,6 +55,26 @@ namespace Awesome.Controllers
             return Ok(mapper.Map<UserResponseDto>(user));
         }
 
+        [HttpPut("avatar")]
+        public async Task<IActionResult> UpdateAvatarAsync([FromForm] IFormFile? file)
+        {
+            var userId = GetUserId();
+            
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file was uploaded");
+            }
+            
+            // Check is file is an image
+            if (!file.ContentType.StartsWith("image"))
+            {
+                return BadRequest("File is not an image");
+            }
+
+            var user = await userService.UpdateUserAvatarAsync(userId, file.OpenReadStream());
+            return Ok(mapper.Map<UserResponseDto>(user));
+        }
+
         [HttpPost("email/verify")]
         public async Task<IActionResult> VerifyEmailAsync([FromBody] OtpDto body)
         {

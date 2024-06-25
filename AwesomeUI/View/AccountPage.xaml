@@ -6,6 +6,12 @@
              x:DataType="viewModel:AccountViewModel">
     <ContentPage.Content>
         <StackLayout Padding="20" Spacing="10">
+            <Image Source="{Binding ProfilePicture}" WidthRequest="100" HeightRequest="100" Margin="0,0,0,10" />
+            <!-- <Button Text="Upload Picture" Command="{Binding UploadProfilePictureCommand}" Margin="0,0,0,10" /> -->
+            <StackLayout Orientation="Horizontal" Spacing="10">
+                <Button Text="Upload Picture" Command="{Binding UploadProfilePictureCommand}" Margin="0,0,0,10" />
+                <Button Text="Open Camera" Command="{Binding OpenCameraCommand}" Margin="0,0,0,10" />
+            </StackLayout>
             <Entry Placeholder="Full Name" Text="{Binding FullName}" Margin="0,0,0,10" />
             <DatePicker Date="{Binding BirthDate}" Margin="0,0,0,10" />
             <Button Text="Update" Command="{Binding UpdateAccountCommand}" Margin="0,0,0,10" />

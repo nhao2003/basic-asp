@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Linq;
 using System.Threading.Tasks;
 using Awesome.DTOs.User;
+using Awesome.Services.FileUploadService;
 using Awesome.Services.SmsService;
 using Awesome.Utils;
 
@@ -13,6 +14,7 @@ namespace Awesome.Services.UserService
     public class UserService(
         ApplicationDbContext context,
         IEmailSender emailSender,
+        IFileUploadService fileUploadService,
         CryptoUtils cryptoUtils,
         ISmsService smsService)
         : IUserService
@@ -58,6 +60,22 @@ namespace Awesome.Services.UserService
             user.EmailVerifiedAt = null;
             context.Users.Update(user);
             await this.SendVerificationEmail(email, otp);
+            await context.SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<User> UpdateUserAvatarAsync(Guid userId, Stream stream)
+        {
+            var user = await context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                throw new KeyNotFoundException("User not found");
+            }
+            const string folder = "profile-pictures";
+            var fileName = $"{userId}.jpg";
+            var url = await fileUploadService.UploadFileAsync(folder, fileName, stream);
+            user.Avatar = url;
+            context.Users.Update(user);
             await context.SaveChangesAsync();
             return user;
         }
