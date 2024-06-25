@@ -8,6 +8,7 @@
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:viewmodel="using:AwesomeUI.ViewModel"
     xmlns:converters="clr-namespace:AwesomeUI.Converters"
+    xmlns:controls="clr-namespace:AwesomeUI.Controls"
     ios:Page.UseSafeArea="True"
     Title="Blogs"
     x:DataType="viewmodel:HomeViewModel">
@@ -34,34 +35,44 @@
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="model:Blog">
-                            <Grid Padding="10">
-                                <Frame HeightRequest="150" Style="{StaticResource CardView}">
-                                    <Frame.GestureRecognizers>
-                                        <TapGestureRecognizer
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:HomeViewModel}}, Path=GoToDetailsCommand}"
-                                            CommandParameter="{Binding .}" />
-                                    </Frame.GestureRecognizers>
-                                    <Grid Padding="0" ColumnDefinitions="125,*">
-                                        <Image
-                                            Aspect="AspectFill"
-                                            HeightRequest="150"
-                                            Source="{Binding Thumbnail}"
-                                            WidthRequest="125" />
-                                        <VerticalStackLayout
-                                            Grid.Column="1"
-                                            VerticalOptions="Center"
-                                            Padding="10">
-                                            <Label Style="{StaticResource MediumLabel}" Text="{Binding Title}" />
-                                            <Label Style="{StaticResource SmallLabel}" Text="{Binding Description}"
-                                                   LineBreakMode="TailTruncation" MaxLines="3" />
-                                            <Label Style="{StaticResource SmallLabel}"
-                                                   Text="{Binding CreatedAt, StringFormat='{0:MM/dd/yyyy}'}" />
-                                            <Label Style="{StaticResource SmallLabel}"
-                                                   Text="{Binding Categories, Converter={StaticResource CategoryArrayToStringConverter}}" />
-                                        </VerticalStackLayout>
-                                    </Grid>
-                                </Frame>
-                            </Grid>
+                            <controls:BlogPostView
+                                Margin="10"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:HomeViewModel}}, Path=GoToDetailsCommand}"
+                                CommandParameter="{Binding .}"
+                                Title="{Binding Title}"
+                                Description="{Binding Description}"
+                                Date="{Binding CreatedAt}"
+                                Image="{Binding Thumbnail}"
+                                Category="{Binding Categories}"
+                                />
+                            <!-- <Grid Padding="10"> -->
+                            <!--     <Frame HeightRequest="150" Style="{StaticResource CardView}"> -->
+                            <!--         <Frame.GestureRecognizers> -->
+                            <!--             <TapGestureRecognizer -->
+                            <!--                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:HomeViewModel}}, Path=GoToDetailsCommand}" -->
+                            <!--                 CommandParameter="{Binding .}" /> -->
+                            <!--         </Frame.GestureRecognizers> -->
+                            <!--         <Grid Padding="0" ColumnDefinitions="125,*"> -->
+                            <!--             <Image -->
+                            <!--                 Aspect="AspectFill" -->
+                            <!--                 HeightRequest="150" -->
+                            <!--                 Source="{Binding Thumbnail}" -->
+                            <!--                 WidthRequest="125" /> -->
+                            <!--             <VerticalStackLayout -->
+                            <!--                 Grid.Column="1" -->
+                            <!--                 VerticalOptions="Center" -->
+                            <!--                 Padding="10"> -->
+                            <!--                 <Label Style="{StaticResource MediumLabel}" Text="{Binding Title}" /> -->
+                            <!--                 <Label Style="{StaticResource SmallLabel}" Text="{Binding Description}" -->
+                            <!--                        LineBreakMode="TailTruncation" MaxLines="3" /> -->
+                            <!--                 <Label Style="{StaticResource SmallLabel}" -->
+                            <!--                        Text="{Binding CreatedAt, StringFormat='{0:MM/dd/yyyy}'}" /> -->
+                            <!--                 <Label Style="{StaticResource SmallLabel}" -->
+                            <!--                        Text="{Binding Categories, Converter={StaticResource CategoryArrayToStringConverter}}" /> -->
+                            <!--             </VerticalStackLayout> -->
+                            <!--         </Grid> -->
+                            <!--     </Frame> -->
+                            <!-- </Grid> -->
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
