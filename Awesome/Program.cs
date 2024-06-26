@@ -21,7 +21,6 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -87,9 +86,6 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 });
 
-// add-migration InitialCreate
-// update-database
-
 var app = builder.Build();
 
 // Add this block of code to update the database at startup
@@ -129,31 +125,3 @@ app.UseStaticFiles();
 app.MapGet("/", () => "Hello World!");
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.Run();
-
-Task LogAttempt(IHeaderDictionary headers, string eventType)
-{
-    var logger = loggerFactory.CreateLogger<Program>();
-
-    var authorizationHeader = headers["Authorization"].FirstOrDefault();
-
-    if (authorizationHeader is null)
-        logger.LogInformation($"{eventType}. JWT not present");
-    else
-    {
-        var jwtString = authorizationHeader["Bearer ".Length..];
-
-        var jwt = new JwtSecurityToken(jwtString);
-
-        // Print reason why the token is invalid
-        if (jwt.ValidTo < DateTime.UtcNow)
-            logger.LogInformation(
-                $"{eventType}. Token expired at {jwt.ValidTo.ToLongTimeString()}. System time: {DateTime.UtcNow.ToLongTimeString()}");
-        else if (jwt.ValidFrom > DateTime.UtcNow)
-            logger.LogInformation(
-                $"{eventType}. Token not valid until {jwt.ValidFrom.ToLongTimeString()}. System time: {DateTime.UtcNow.ToLongTimeString()}");
-        else
-            logger.LogInformation($"{eventType}. Token is valid");
-    }
-
-    return Task.CompletedTask;
-}

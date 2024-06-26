@@ -43,7 +43,7 @@
                                 Description="{Binding Description}"
                                 Date="{Binding CreatedAt}"
                                 Image="{Binding Thumbnail}"
-                                Category="{Binding Categories}"
+                                Category="{Binding Categories, Converter={StaticResource CategoryArrayToStringConverter}}"
                                 />
                             <!-- <Grid Padding="10"> -->
                             <!--     <Frame HeightRequest="150" Style="{StaticResource CardView}"> -->

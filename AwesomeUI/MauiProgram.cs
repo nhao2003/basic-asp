@@ -15,6 +15,16 @@ public static class MauiProgram
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                fonts.AddFont("Poppins-Black.ttf", "PoppinsBlack");
+                fonts.AddFont("Poppins-Bold.ttf", "PoppinsBold");
+                fonts.AddFont("Inter-Regular.ttf", "Inter");
+                fonts.AddFont("Inter-Bold.ttf", "InterBold");
+                fonts.AddFont("Inter-SemiBold.ttf", "InterSemiBold");
+
+                //FontAwesome Icons
+                fonts.AddFont("fa-brands-400.otf", "FaBrands");
+                fonts.AddFont("fa-regular-400.otf", "FaRegular");
+                fonts.AddFont("fa-solid-900.otf", "FaSolid");
             });
 
 #if DEBUG

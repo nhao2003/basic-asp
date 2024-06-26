@@ -17,13 +17,13 @@
                 <Setter Property="Shell.DisabledColor" Value="#B4FFFFFF" />
                 <Setter Property="Shell.UnselectedColor" Value="{AppThemeBinding Dark=#95FFFFFF, Light=#95000000}" />
                 <Setter Property="Shell.TabBarBackgroundColor"
-                        Value="{AppThemeBinding Dark={StaticResource DarkBackground}, Light={StaticResource LightBackground}}" />
+                        Value="{AppThemeBinding Dark={StaticResource Gray600}, Light={StaticResource White}}" />
                 <Setter Property="Shell.TabBarForegroundColor"
-                        Value="{AppThemeBinding Dark={StaticResource LightBackground}, Light={StaticResource DarkBackground}}" />
+                        Value="{AppThemeBinding Dark={StaticResource White}, Light={StaticResource Gray600}}" />
                 <Setter Property="Shell.TabBarUnselectedColor"
                         Value="{AppThemeBinding Dark=#95FFFFFF, Light=#95000000}" />
                 <Setter Property="Shell.TabBarTitleColor"
-                        Value="{AppThemeBinding Dark={StaticResource LightBackground}, Light={StaticResource DarkBackground}}" />
+                        Value="{AppThemeBinding Dark={StaticResource White}, Light={StaticResource Gray600}}" />
             </Style>
             <Style BasedOn="{StaticResource BaseStyle}" TargetType="ShellItem" ApplyToDerivedTypes="True" />
         </ResourceDictionary>

@@ -2,18 +2,15 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:model="clr-namespace:AwesomeUI.Model"
+             xmlns:customControls="clr-namespace:AwesomeUI.Controls"
              xmlns:viewmodel="clr-namespace:AwesomeUI.ViewModel"
              x:DataType="viewmodel:SignInViewModel"
              x:Class="AwesomeUI.View.SignInPage">
     <ContentPage.Content>
         <StackLayout VerticalOptions="CenterAndExpand" Padding="30">
             <Image Source="dotnet_bot.png" HeightRequest="250" WidthRequest="250" HorizontalOptions="Center"></Image>
-            <Frame BorderColor="Black" CornerRadius="5" Padding="5" Margin="0,10,0,0">
-                <Entry Placeholder="Enter Your Username" Text="{Binding Username}" />
-            </Frame>
-            <Frame BorderColor="Black" CornerRadius="5" Padding="5" Margin="0,10,0,0">
-                <Entry Placeholder="Enter Your Password" IsPassword="True" Text="{Binding Password}" />
-            </Frame>
+                <customControls:Entry Placeholder="Enter Your Username" Text="{Binding Username}" />
+                <customControls:Entry Placeholder="Enter Your Password" IsPassword="True" Text="{Binding Password}" />
             <Grid Margin="0,10,0,0">
                 <Button Text="Login" Command="{Binding SignInCommand}" IsVisible="{Binding IsNotBusy}" />
                 <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
