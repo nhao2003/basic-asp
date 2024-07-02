@@ -8,6 +8,10 @@ using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
 using Awesome.Middlewares;
 using Awesome.Profiles;
+using Awesome.Repositories.Blog;
+using Awesome.Repositories.Category;
+using Awesome.Repositories.Session;
+using Awesome.Repositories.User;
 using Awesome.Services.BlogService;
 using Awesome.Services.Category;
 using Awesome.Services.FileUploadService;
@@ -51,22 +55,29 @@ var secret = builder.Configuration["JWT:AccessSecretKey"] ??
 builder.Services.AddTransient<CryptoUtils>();
 builder.Services.Configure<MailKitEmailSenderOptions>(options =>
 {
-    options.Host_Address = builder.Configuration["ExternalProviders:MailKit:SMTP:Address"];
+    options.Host_Address = builder.Configuration["ExternalProviders:MailKit:SMTP:Address"] ?? throw new InvalidOperationException();
     options.Host_Port = Convert.ToInt32(builder.Configuration["ExternalProviders:MailKit:SMTP:Port"]);
-    options.Host_Username = builder.Configuration["ExternalProviders:MailKit:SMTP:Account"];
-    options.Host_Password = builder.Configuration["ExternalProviders:MailKit:SMTP:Password"];
-    options.Sender_EMail = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderEmail"];
-    options.Sender_Name = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderName"];
+    options.Host_Username = builder.Configuration["ExternalProviders:MailKit:SMTP:Account"] ?? throw new InvalidOperationException();
+    options.Host_Password = builder.Configuration["ExternalProviders:MailKit:SMTP:Password"] ?? throw new InvalidOperationException();
+    options.Sender_EMail = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderEmail"] ?? throw new InvalidOperationException();
+    options.Sender_Name = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderName"] ?? throw new InvalidOperationException();
 });
 var account = new Account(
     builder.Configuration["ExternalProviders:Cloudinary:CloudName"],
     builder.Configuration["ExternalProviders:Cloudinary:ApiKey"],
     builder.Configuration["ExternalProviders:Cloudinary:ApiSecret"]
 );
+
+#region Repository
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ISessionRepository, SessionRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IBlogRepository, BlogRepository>();
+#endregion
+
+
 var cloudinary = new Cloudinary(account);
-
 builder.Services.AddSingleton(cloudinary);
-
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddTransient<IEmailSender, MailKitEmailSender>();
 builder.Services.AddTransient<ISmsService, VonageSmsMessage>();

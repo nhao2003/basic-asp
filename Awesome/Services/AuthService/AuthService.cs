@@ -7,6 +7,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Awesome.Repositories;
+using Awesome.Repositories.Session;
+using Awesome.Repositories.User;
 using Awesome.Utils;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -23,17 +26,21 @@ namespace Awesome.Services.AuthService
         private readonly double _tokenLifeTime;
         private readonly double _refreshTokenLifeTime;
         private readonly string _issuer;
+
         private readonly string _audience;
-        private readonly ApplicationDbContext _context;
+
+        // private readonly ApplicationDbContext _context;
         private readonly IEmailSender EmailSender;
 
-        public AuthService(IConfiguration configuration, ApplicationDbContext context, CryptoUtils cryptoUtils,
-            IEmailSender emailSender)
+        private readonly IUserRepository _userRepository;
+        private readonly ISessionRepository _sessionRepository;
+
+        public AuthService(IConfiguration configuration, CryptoUtils cryptoUtils,
+            IEmailSender emailSender, IUserRepository userRepository, ISessionRepository sessionRepository)
         {
             EmailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
             _cryptoUtils = cryptoUtils ?? throw new ArgumentNullException(nameof(cryptoUtils));
             var configuration1 = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _context = context ?? throw new ArgumentNullException(nameof(context));
 
             _accessSecretKey = configuration1["Jwt:AccessSecretKey"] ??
                                throw new ArgumentNullException("Jwt:AccessSecretKey is missing in appsettings.json");
@@ -49,6 +56,9 @@ namespace Awesome.Services.AuthService
                       throw new ArgumentNullException("Jwt:Issuer is missing in appsettings.json");
             _audience = configuration1["Jwt:Audience"] ??
                         throw new ArgumentNullException("Jwt:Audience is missing in appsettings.json");
+            
+            _userRepository = userRepository;
+            _sessionRepository = sessionRepository;
         }
 
         private string GenerateToken(string sessionId, User? user, string secretKey, double expiryTime)
@@ -77,7 +87,7 @@ namespace Awesome.Services.AuthService
 
         public async Task<AuthenticationResponse> SignIn(string username, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+            var user = await _userRepository.GetByUsername(username);
             if (user == null || _cryptoUtils.Verify(username, user.Password, password) ==
                 PasswordVerificationResult.Failed)
             {
@@ -89,7 +99,7 @@ namespace Awesome.Services.AuthService
 
         public async Task<AuthenticationResponse> SignUp(string username, string password)
         {
-            var existingUser = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+            var existingUser = await _userRepository.GetByUsername(username);
 
             if (existingUser != null)
             {
@@ -107,9 +117,7 @@ namespace Awesome.Services.AuthService
                 Role = UserRole.Admin
             };
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
+            await _userRepository.AddAsync(user);
             return GenerateTokens(user);
         }
 
@@ -127,8 +135,7 @@ namespace Awesome.Services.AuthService
                 UpdatedAt = null,
                 RefreshToken = _cryptoUtils.Hash(user.Username, refreshToken)
             };
-            _context.Sessions.Add(session);
-            _context.SaveChanges();
+            _sessionRepository.AddAsync(session);
             return new AuthenticationResponse
             {
                 AccessToken = accessToken,
@@ -163,7 +170,7 @@ namespace Awesome.Services.AuthService
                     throw new SecurityTokenException("Invalid token");
                 }
 
-                var session = await _context.Sessions.FindAsync(Guid.Parse(sessionId));
+                var session = await _sessionRepository.GetAsync(Guid.Parse(sessionId));
 
 
                 if (session == null)
@@ -171,7 +178,7 @@ namespace Awesome.Services.AuthService
                     throw new SecurityTokenException("Invalid refresh token");
                 }
 
-                var user = await _context.Users.FindAsync(session.UserId);
+                var user = await _userRepository.GetAsync(session.UserId);
 
                 if (user == null || _cryptoUtils.Verify(user.Username, session.RefreshToken, refreshToken) ==
                     PasswordVerificationResult.Failed)
@@ -181,9 +188,7 @@ namespace Awesome.Services.AuthService
 
                 var newAccessToken = GenerateToken(session.Id.ToString(), user, _accessSecretKey, _tokenLifeTime);
                 session.UpdatedAt = DateTime.Now;
-                _context.Sessions.Update(session);
-                await _context.SaveChangesAsync();
-
+                await _sessionRepository.UpdateAsync(session);
                 return new RefreshTokenResponse
                 {
                     AccessToken = newAccessToken,
@@ -198,14 +203,13 @@ namespace Awesome.Services.AuthService
 
         public Task SignOut(Guid userId, Guid sessionId)
         {
-            var session = _context.Sessions.Find(sessionId);
+            var session = _sessionRepository.GetAsync(sessionId).Result;
             if (session == null || session.UserId != userId)
             {
                 throw new SecurityTokenException("Invalid session");
             }
 
-            _context.Sessions.Remove(session);
-            return _context.SaveChangesAsync();
+            return _sessionRepository.DeleteAsync(sessionId);
         }
     }
 }

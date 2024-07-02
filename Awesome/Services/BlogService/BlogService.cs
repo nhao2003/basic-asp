@@ -3,16 +3,20 @@ using Awesome.DTOs;
 using Awesome.DTOs.Blog;
 using Awesome.Helper;
 using Awesome.Models.Entities;
+using Awesome.Repositories.Blog;
 using Awesome.Services.Category;
 using Microsoft.EntityFrameworkCore;
 
 namespace Awesome.Services.BlogService
 {
-    public class BlogService(ApplicationDbContext context, ICategoryService categoryService) : IBlogService
+    public class BlogService(IBlogRepository blogRepository, ICategoryService categoryService) : IBlogService
     {
         public async Task<IEnumerable<Blog>> GetBlogs(QueryObject query)
         {
-            var blogs = context.Blogs.Include(
+            // var blogs = context.Blogs.Include(
+            //     x => x.Categories
+            // ).AsQueryable();
+            var blogs = blogRepository.GetAllAsync().Include(
                 x => x.Categories
             ).AsQueryable();
 
@@ -31,7 +35,7 @@ namespace Awesome.Services.BlogService
 
         public async Task<Blog?> GetBlog(Guid id)
         {
-            return await context.Blogs.Include(
+            return await blogRepository.GetAllAsync().Include(
                 x => x.Categories
             ).FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -48,25 +52,22 @@ namespace Awesome.Services.BlogService
                 CreatedAt = DateTime.Now,
                 Categories = new List<Models.Entities.Category>()
             };
-            await using var transaction = await context.Database.BeginTransactionAsync();
             foreach (var categoryId in data.Categories)
             {
-                var category = await context.Categories.FindAsync(categoryId);
+                var category = await categoryService.GetById(categoryId);
                 if (category != null)
                 {
                     blog.Categories.Add(category);
                 }
             }
 
-            context.Blogs.Add(blog);
-            await context.SaveChangesAsync();
-            transaction.Commit();
+            await blogRepository.AddAsync(blog);
             return blog;
         }
 
         public async Task<Blog?> UpdateBlog(Guid id, UpdateBlogDto blog)
         {
-            var blogToUpdate = await context.Blogs.FindAsync(id);
+            var blogToUpdate = await blogRepository.GetAsync(id);
             if (blogToUpdate == null)
             {
                 return null;
@@ -78,21 +79,20 @@ namespace Awesome.Services.BlogService
             blogToUpdate.Author = blog.Author ?? blogToUpdate.Author;
             blogToUpdate.Content = blog.Content ?? blogToUpdate.Content;
             blogToUpdate.UpdatedAt = DateTime.Now;
-            context.Blogs.Update(blogToUpdate);
-            await context.SaveChangesAsync();
+            
+            await blogRepository.UpdateAsync(blogToUpdate);
             return blogToUpdate;
         }
 
         public async Task<Blog?> DeleteBlog(Guid id)
         {
-            var blogToDelete = await context.Blogs.FirstOrDefaultAsync(b => b.Id == id);
+            var blogToDelete = await blogRepository.GetAsync(id);
             if (blogToDelete == null)
             {
                 return null;
             }
 
-            context.Blogs.Remove(blogToDelete);
-            await context.SaveChangesAsync();
+            await blogRepository.DeleteAsync(id);
             return blogToDelete;
         }
     }

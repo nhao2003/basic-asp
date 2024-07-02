@@ -1,12 +1,13 @@
 ﻿using Awesome.Data;
 using Awesome.DTOs.Category;
+using Awesome.Repositories.Category;
 using Microsoft.EntityFrameworkCore;
 
 namespace Awesome.Services.Category;
 
 using Models.Entities;
 
-public class CategoryService(ApplicationDbContext dbContext) : ICategoryService
+public class CategoryService(ICategoryRepository categoryRepository) : ICategoryService
 {
     public async Task<Category> CreateAsync(CreateCategoryRequestDto request)
     {
@@ -15,23 +16,21 @@ public class CategoryService(ApplicationDbContext dbContext) : ICategoryService
             Name = request.Name,
         };
 
-        await dbContext.Categories.AddAsync(category);
-        await dbContext.SaveChangesAsync();
+        await categoryRepository.AddAsync(category);
 
         return category;
     }
 
     public async Task<Category?> DeleteAsync(Guid id)
     {
-        var existingCategory = await dbContext.Categories.FirstOrDefaultAsync(x => x.Id == id);
+        var existingCategory = await categoryRepository.GetAsync(id);
 
         if (existingCategory is null)
         {
             return null;
         }
 
-        dbContext.Categories.Remove(existingCategory);
-        await dbContext.SaveChangesAsync();
+        await categoryRepository.DeleteAsync(id);
         return existingCategory;
     }
 
@@ -43,7 +42,7 @@ public class CategoryService(ApplicationDbContext dbContext) : ICategoryService
         int? pageSize = 100)
     {
         // Query
-        var categories = dbContext.Categories.AsQueryable();
+        var categories = categoryRepository.GetAllAsync().AsQueryable();
 
         // Filtering
         if (string.IsNullOrWhiteSpace(query) == false)
@@ -70,22 +69,21 @@ public class CategoryService(ApplicationDbContext dbContext) : ICategoryService
 
     public async Task<Category?> GetById(Guid id)
     {
-        return await dbContext.Categories.FirstOrDefaultAsync(x => x.Id == id);
+        return await categoryRepository.GetAsync(id);
     }
 
     public async Task<int> GetCount()
     {
-        return await dbContext.Categories.CountAsync();
+        return await categoryRepository.GetAllAsync().CountAsync();
     }
 
     public async Task<Category?> UpdateAsync(Guid id, UpdateCategoryRequestDto request)
     {
-        var existingCategory = await dbContext.Categories.FirstOrDefaultAsync(x => x.Id == id);
+        var existingCategory = await categoryRepository.GetAsync(id);
 
         if (existingCategory == null) return null;
         existingCategory.Name = request.Name;
-        dbContext.Entry(existingCategory).CurrentValues.SetValues(existingCategory);
-        await dbContext.SaveChangesAsync();
+        await categoryRepository.UpdateAsync(existingCategory);
         return existingCategory;
     }
 }

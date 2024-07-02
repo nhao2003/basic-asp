@@ -23,4 +23,5 @@ public interface ICategoryService
     Task<Category?> DeleteAsync(Guid id);
 
     Task<int> GetCount();
+    
 }
