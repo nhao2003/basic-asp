@@ -1,7 +1,8 @@
 ﻿namespace AwesomeUI.Services;
 
-public abstract class BaseService(HttpClient httpClient)
+public abstract class BaseService(HttpClient httpClient, IConnectivity connectivity)
 {
     protected readonly string BaseUrl = "http://10.0.2.2:8000/api";
     protected readonly HttpClient HttpClient = httpClient;
+    protected readonly IConnectivity Connectivity = connectivity;
 }

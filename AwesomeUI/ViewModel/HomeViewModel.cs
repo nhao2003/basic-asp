@@ -33,13 +33,6 @@ public partial class HomeViewModel : BaseViewModel
 
         try
         {
-            if (_connectivity.NetworkAccess != NetworkAccess.Internet)
-            {
-                await Shell.Current.DisplayAlert("No connectivity!",
-                    $"Please check internet and try again.", "OK");
-                return;
-            }
-
             IsBusy = true;
             var blogs = await _blogService.GetBlogs();
 

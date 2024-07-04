@@ -4,17 +4,15 @@ using AwesomeUI.DTO.Auth;
 
 namespace AwesomeUI.Services;
 
-public class AuthService(HttpClient httpClient) : BaseService(httpClient)
+public class AuthService(HttpClient httpClient, IConnectivity connectivity) : BaseService(httpClient, connectivity)
 {
-    
-    
     private string? _accessToken;
     private string? _refreshToken;
-    
+
     public string? AccessToken => _accessToken;
 
     public string? RefreshToken => _refreshToken;
-    
+
     public async Task<bool> SignInAsync(AuthRequest authRequest)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/Auth/signin");
@@ -22,7 +20,7 @@ public class AuthService(HttpClient httpClient) : BaseService(httpClient)
         request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         try
         {
-            var response = await httpClient.SendAsync(request);
+            var response = await HttpClient.SendAsync(request);
             var body = await response.Content.ReadAsStringAsync();
             Debug.WriteLine($"Response: {body}");
 
@@ -43,7 +41,7 @@ public class AuthService(HttpClient httpClient) : BaseService(httpClient)
             throw;
         }
     }
-    
+
     public async Task<string?> SignUpAsync(AuthRequest authRequest)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/Auth/signup");
@@ -51,7 +49,7 @@ public class AuthService(HttpClient httpClient) : BaseService(httpClient)
         request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         try
         {
-            var response = await httpClient.SendAsync(request);
+            var response = await HttpClient.SendAsync(request);
             var body = await response.Content.ReadAsStringAsync();
             Debug.WriteLine($"Response: {body}");
 
@@ -60,6 +58,7 @@ public class AuthService(HttpClient httpClient) : BaseService(httpClient)
                 var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
                 return error?["message"] ?? "Please check your credentials and try again.";
             }
+
             var content = await response.Content.ReadFromJsonAsync<AuthResponse>();
             _accessToken = content.AccessToken;
             _refreshToken = content.RefreshToken;
@@ -75,7 +74,7 @@ public class AuthService(HttpClient httpClient) : BaseService(httpClient)
             throw;
         }
     }
-    
+
     public async Task<bool> RefreshTokenAsync()
     {
         var refreshToken = await SecureStorage.GetAsync("RefreshToken");
@@ -85,7 +84,7 @@ public class AuthService(HttpClient httpClient) : BaseService(httpClient)
         request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         try
         {
-            var response = await httpClient.SendAsync(request);
+            var response = await HttpClient.SendAsync(request);
             var body = await response.Content.ReadAsStringAsync();
             Debug.WriteLine($"Response: {body}");
 

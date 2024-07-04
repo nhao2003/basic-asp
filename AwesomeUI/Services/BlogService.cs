@@ -1,23 +1,35 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using AwesomeUI.Data.Local;
+using AwesomeUI.Data.Remote;
 
 namespace AwesomeUI.Services;
 
-public class BlogService(HttpClient httpClient, AuthService authService) : BaseService(httpClient)
+public class BlogService(
+    IConnectivity connectivity,
+    HttpClient httpClient,
+    IBlogLocalData blogLocalData,
+    IBlogRemoteData blogRemoteData)
+    : BaseService(httpClient, connectivity)
 {
-    private readonly HttpClient _httpClient = httpClient;
-
-    private List<Blog>? _blogList;
     public async Task<List<Blog>?> GetBlogs()
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl}/Blog");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authService.AccessToken);
-        var response = await _httpClient.SendAsync(request);
-        if (response.IsSuccessStatusCode)
+        List<Blog>? blogs;
+
+        if (Connectivity.NetworkAccess == NetworkAccess.Internet)
         {
-            _blogList = await response.Content.ReadFromJsonAsync(BlogContext.Default.ListBlog);
+            blogs = await blogRemoteData.GetBlogsAsync();
+            if (blogs == null) return blogs;
+            foreach (var blog in blogs)
+            {
+                await blogLocalData.SaveBlogAsync(blog);
+            }
+        }
+        else
+        {
+            blogs = await blogLocalData.GetBlogsAsync();
         }
 
-        return _blogList;
+        return blogs;
     }
 }

@@ -1,4 +1,5 @@
-﻿using AwesomeUI.DTO.User;
+﻿using System.Security;
+using AwesomeUI.DTO.User;
 using AwesomeUI.Services;
 using Prism.Commands;
 
@@ -10,7 +11,6 @@ namespace AwesomeUI.ViewModel
         private string? _fullName;
         public DelegateCommand UpdateAccountCommand { get; private set; }
         private readonly UserService _userService;
-
         public AccountViewModel(UserService userService)
         {
             _userService = userService;

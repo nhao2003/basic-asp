@@ -10,12 +10,15 @@ public partial class SignInViewModel : BaseViewModel
     private readonly AuthService _authService;
     public DelegateCommand SignInCommand { get; private set; }
     public DelegateCommand GoToSignUpCommand { get; private set; }
-    public SignInViewModel(AuthService authService)
+    
+    private IConnectivity _connectivity;
+    public SignInViewModel(AuthService authService, IConnectivity connectivity)
     {
         _authService = authService;
         Title = "Sign In";
         SignInCommand = new DelegateCommand(async () => await SignInAsync());
         GoToSignUpCommand = new DelegateCommand(async () => await GoToSignUpAsync());
+        _connectivity = connectivity;
     }
 
      private string _username = "abcd@abc.com";
@@ -35,6 +38,14 @@ public partial class SignInViewModel : BaseViewModel
 
     async Task SignInAsync()
     {
+        if (_connectivity.NetworkAccess != NetworkAccess.Internet)
+        {
+            await Shell.Current.DisplayAlert("No connectivity!",
+                $"Please check internet and try again.", "OK");
+            return;
+        }
+
+        
         if (IsBusy)
             return;
 

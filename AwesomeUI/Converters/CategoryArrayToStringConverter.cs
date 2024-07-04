@@ -10,11 +10,10 @@ namespace AwesomeUI.Converters
     {
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is Category[] categories)
+            if (value is string[] strings)
             {
-                return string.Join(", ", categories.Select(c => c.Name));
+                return string.Join(", ", strings);
             }
-
             return string.Empty;
         }
 

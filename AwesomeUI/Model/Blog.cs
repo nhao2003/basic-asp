@@ -1,40 +1,43 @@
 ﻿using System.Text.Json.Serialization;
+using SQLite;
 
 namespace AwesomeUI.Model;
 
 public class Blog
 {
-    [JsonPropertyName("id")]
-    public string? Id { get; set; }
-    
-    [JsonPropertyName("title")]
-    public required string Title { get; set; }
-    
-    [JsonPropertyName("description")]
-    public required string Description { get; set; }
-    
-    [JsonPropertyName("thumbnail")]
+    [JsonPropertyName("id")] [PrimaryKey] public string? Id { get; set; }
 
-    public required string Thumbnail { get; set; }
-    
-    [JsonPropertyName("author")]
-    public required string Author { get; set; }
-    
-    [JsonPropertyName("content")]
-    public required string Content { get; set; }
+    [JsonPropertyName("title")] public string Title { get; set; }
+
+    [JsonPropertyName("description")] public string Description { get; set; }
+
+    [JsonPropertyName("thumbnail")] public string Thumbnail { get; set; }
+
+    [JsonPropertyName("author")] public string Author { get; set; }
+
+    [JsonPropertyName("content")] public string Content { get; set; }
     
     [JsonPropertyName("categories")]
-    public required Category[] Categories { get; set; }
+    [Ignore]
+    public string[]? Categories { get; set; }
     
-    [JsonPropertyName("createdAt")]
-    public required DateTime CreatedAt { get; set; }
+    [JsonIgnore]
+    public string CategoriesString
+    {
+        get => Categories == null ? string.Empty : string.Join(",", Categories);
+        set => Categories = value.Split(',');
+    }
     
-    [JsonPropertyName("updatedAt")]
-    public DateTime? UpdatedAt { get; set; }
+    [JsonPropertyName("createdAt")] public DateTime CreatedAt { get; set; }
+
+    [JsonPropertyName("updatedAt")] public DateTime? UpdatedAt { get; set; }
+
+    public Blog()
+    {
+    }
 }
 
 [JsonSerializable(typeof(List<Blog>))]
 internal sealed partial class BlogContext : JsonSerializerContext
 {
-    
 }

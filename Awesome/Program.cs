@@ -4,10 +4,7 @@ using Awesome.Services.AuthService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
-using System.IdentityModel.Tokens.Jwt;
-using AutoMapper;
 using Awesome.Middlewares;
-using Awesome.Profiles;
 using Awesome.Repositories.Blog;
 using Awesome.Repositories.Category;
 using Awesome.Repositories.Session;
@@ -22,25 +19,20 @@ using Awesome.Utils;
 using CloudinaryDotNet;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString(
-        Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? "DefaultConnection"));
-});
+
+var connectionString = builder.Configuration.GetConnectionString(
+    Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? "DefaultConnection");
+
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddHttpLogging(logging =>
 {
-    // Log
-    logging.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders |
-                            HttpLoggingFields.ResponsePropertiesAndHeaders;
+    logging.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders | HttpLoggingFields.ResponsePropertiesAndHeaders;
     logging.RequestHeaders.Add("Authorization");
     logging.ResponseHeaders.Add("Authorization");
     logging.MediaTypeOptions.AddText("application/json");
@@ -48,11 +40,12 @@ builder.Services.AddHttpLogging(logging =>
     logging.RequestBodyLogLimit = 4096;
     logging.ResponseBodyLogLimit = 4096;
 });
+
 using var loggerFactory = LoggerFactory.Create(b => b.SetMinimumLevel(LogLevel.Trace).AddConsole());
 
-var secret = builder.Configuration["JWT:AccessSecretKey"] ??
-             throw new InvalidOperationException("Secret not configured");
+var secret = builder.Configuration["JWT:AccessSecretKey"] ?? throw new InvalidOperationException("Secret not configured");
 builder.Services.AddTransient<CryptoUtils>();
+
 builder.Services.Configure<MailKitEmailSenderOptions>(options =>
 {
     options.Host_Address = builder.Configuration["ExternalProviders:MailKit:SMTP:Address"] ?? throw new InvalidOperationException();
@@ -62,29 +55,32 @@ builder.Services.Configure<MailKitEmailSenderOptions>(options =>
     options.Sender_EMail = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderEmail"] ?? throw new InvalidOperationException();
     options.Sender_Name = builder.Configuration["ExternalProviders:MailKit:SMTP:SenderName"] ?? throw new InvalidOperationException();
 });
+builder.Services.AddAutoMapper(typeof(Program));
+
 var account = new Account(
     builder.Configuration["ExternalProviders:Cloudinary:CloudName"],
     builder.Configuration["ExternalProviders:Cloudinary:ApiKey"],
     builder.Configuration["ExternalProviders:Cloudinary:ApiSecret"]
 );
+var cloudinary = new Cloudinary(account);
 
-#region Repository
+#region Repositories
+builder.Services.AddSingleton(cloudinary);
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 #endregion
 
-
-var cloudinary = new Cloudinary(account);
-builder.Services.AddSingleton(cloudinary);
-builder.Services.AddAutoMapper(typeof(Program));
+#region Services
 builder.Services.AddTransient<IEmailSender, MailKitEmailSender>();
 builder.Services.AddTransient<ISmsService, VonageSmsMessage>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IBlogService, BlogService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
+#endregion
+
 builder.Services.AddTransient<JwtBearerHandler, JwtAuthenticationHandler>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddScheme<JwtBearerOptions, JwtAuthenticationHandler>(JwtBearerDefaults.AuthenticationScheme,
@@ -99,7 +95,7 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// Add this block of code to update the database at startup
+// Update the database at startup
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -115,24 +111,16 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-
-// Use custom Filter
-//app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.UseHttpLogging();
-
 app.UseStaticFiles();
-
 app.MapGet("/", () => "Hello World!");
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.Run();

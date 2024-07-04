@@ -6,7 +6,7 @@ using AwesomeUI.DTO.User;
 
 namespace AwesomeUI.Services;
 
-public class UserService(HttpClient httpClient, AuthService authService) : BaseService(httpClient)
+public class UserService(HttpClient httpClient, AuthService authService, IConnectivity connectivity) : BaseService(httpClient, connectivity)
 {
     private String? AccessToken => authService.AccessToken;
     

@@ -1,6 +1,9 @@
-﻿using AwesomeUI.Services;
+﻿using AwesomeUI.Data.Local;
+using AwesomeUI.Data.Remote;
+using AwesomeUI.Services;
 using AwesomeUI.View;
 using Microsoft.Extensions.Logging;
+using SQLite;
 
 namespace AwesomeUI;
 
@@ -30,9 +33,19 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
-        builder.Services.AddSingleton(Connectivity.Current);
+        
+        builder.Services.AddSingleton<SQLiteAsyncConnection>(_ =>
+        {
+            var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AwesomeUI.db3");
+            return new LocalDatabase(dbPath);
+        });
+        
+        builder.Services.AddSingleton<IConnectivity>(Connectivity.Current);
         builder.Services.AddSingleton(Geolocation.Default);
         builder.Services.AddSingleton(Map.Default);
+        
+        builder.Services.AddSingleton<IBlogLocalData, BlogLocalData>();
+        builder.Services.AddSingleton<IBlogRemoteData, BlogRemoteData>();
         
 		      
         builder.Services.AddSingleton<BlogService>();
