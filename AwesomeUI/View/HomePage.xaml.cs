@@ -8,6 +8,7 @@ public partial class HomePage : ContentPage
         InitializeComponent();
         Debug.Assert(IPlatformApplication.Current != null, "IPlatformApplication.Current != null");
         BindingContext = IPlatformApplication.Current.Services.GetService<HomeViewModel>();
+        
     }
     
     protected override async void OnAppearing()

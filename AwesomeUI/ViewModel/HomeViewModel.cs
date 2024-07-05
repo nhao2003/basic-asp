@@ -65,4 +65,10 @@ public partial class HomeViewModel : BaseViewModel
             { "Blog", blog }
         });
     }
+    
+    [RelayCommand]
+    async Task OpenQrCodePage()
+    {
+        await Shell.Current.Navigation.PushAsync(new QrCodePage());
+    }
 }

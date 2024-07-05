@@ -63,6 +63,7 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0"/>
         <PackageReference Include="Prism.Core" Version="8.1.97" />
         <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+        <PackageReference Include="ZXing.Net.Maui.Controls" Version="0.4.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -76,6 +77,12 @@
         <DependentUpon>MainPage.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="ZXing.Net.MAUI.Controls">
+        <HintPath>..\..\..\.nuget\packages\zxing.net.maui.controls\0.4.0\lib\net7.0-ios16.1\ZXing.Net.MAUI.Controls.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

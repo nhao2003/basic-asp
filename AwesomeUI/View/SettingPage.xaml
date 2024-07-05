@@ -11,7 +11,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:SettingItem">
                     <ViewCell>
-                        <Grid Padding="10,5" BackgroundColor="Transparent">
+                        <Grid Padding="20,5" BackgroundColor="Transparent">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />

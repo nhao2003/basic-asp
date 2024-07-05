@@ -38,7 +38,9 @@ public class AuthService(HttpClient httpClient, IConnectivity connectivity) : Ba
         catch (Exception e)
         {
             Debug.WriteLine($"Unable to sign in: {e}");
-            throw;
+            // Clone the exception to avoid leaking sensitive information
+            Exception exception = new(e.Message + "\n" + BaseUrl + "/Auth/signin", e);
+            throw exception;
         }
     }
 

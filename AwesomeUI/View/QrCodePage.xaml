@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+
+             x:Class="AwesomeUI.View.QrCodePage">
+    <controls:CameraBarcodeReaderView
+        x:Name="BarcodeReaderView"
+        BarcodesDetected="BarcodeReaderView_OnBarcodesDetectedodesDetected"
+        >
+        
+    </controls:CameraBarcodeReaderView>
+
+</ContentPage>

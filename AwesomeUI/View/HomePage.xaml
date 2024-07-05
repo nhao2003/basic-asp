@@ -13,7 +13,7 @@
     Title="Blogs"
     x:DataType="viewmodel:HomeViewModel">
     <ContentPage.ToolbarItems>
-        <ToolbarItem IconImageSource="notification_icon.svg" Text="Notification" />
+        <ToolbarItem IconImageSource="qr_code.svg" Text="Notification" Command="{Binding OpenQrCodePageCommand}" />
     </ContentPage.ToolbarItems>
     <ContentPage.Resources>
         <ResourceDictionary>

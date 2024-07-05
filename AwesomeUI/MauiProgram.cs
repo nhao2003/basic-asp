@@ -4,6 +4,7 @@ using AwesomeUI.Services;
 using AwesomeUI.View;
 using Microsoft.Extensions.Logging;
 using SQLite;
+using ZXing.Net.Maui.Controls;
 
 namespace AwesomeUI;
 
@@ -13,6 +14,7 @@ public static class MauiProgram
     {
         var builder = MauiApp.CreateBuilder();
         builder
+            .UseBarcodeReader()
             .UseMauiApp<App>()
             .ConfigureFonts(fonts =>
             {
