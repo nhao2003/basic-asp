@@ -3,6 +3,7 @@ using Awesome.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Awesome.DTOs.User;
 using Awesome.Services.FileUploadService;
@@ -22,9 +23,10 @@ namespace Awesome.Services.UserService
         private string GenerateRandomString(int length)
         {
             const string chars = "0123456789";
-            var random = new Random();
-            return new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
+            var randomGenerator = RandomNumberGenerator.Create();
+            var data = new byte[length];
+            randomGenerator.GetBytes(data);
+            return new string(data.Select(x => chars[x % chars.Length]).ToArray());
         }
 
         private Task SendVerificationEmail(string email, string otp)
