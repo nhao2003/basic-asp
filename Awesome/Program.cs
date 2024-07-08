@@ -43,7 +43,6 @@ builder.Services.AddHttpLogging(logging =>
 
 using var loggerFactory = LoggerFactory.Create(b => b.SetMinimumLevel(LogLevel.Trace).AddConsole());
 
-var secret = builder.Configuration["JWT:AccessSecretKey"] ?? throw new InvalidOperationException("Secret not configured");
 builder.Services.AddTransient<CryptoUtils>();
 
 builder.Services.Configure<MailKitEmailSenderOptions>(options =>
@@ -102,7 +101,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate();
+        await context.Database.MigrateAsync();
     }
     catch (Exception ex)
     {
@@ -123,4 +122,4 @@ app.UseHttpLogging();
 app.UseStaticFiles();
 app.MapGet("/", () => "Hello World!");
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.Run();
+await app.RunAsync();

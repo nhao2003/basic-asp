@@ -7,18 +7,16 @@ namespace Awesome.Services.SmsService;
 
 public class TwilioSmsService
 {
-    private readonly IConfiguration _configuration;
-
-    private string phoneNumber;
+    private readonly string _phoneNumber;
 
     public TwilioSmsService(IConfiguration configuration)
     {
-        _configuration = configuration;
-        var accountSid = _configuration["Twilio:AccountSid"] ??
+        var configuration1 = configuration;
+        var accountSid = configuration1["Twilio:AccountSid"] ??
                          throw new ArgumentNullException(nameof(configuration));
-        var authToken = _configuration["Twilio:AuthToken"] ??
+        var authToken = configuration1["Twilio:AuthToken"] ??
                         throw new ArgumentNullException(nameof(configuration));
-        phoneNumber = _configuration["Twilio:PhoneNumber"] ?? throw new ArgumentNullException(nameof(configuration));
+        _phoneNumber = configuration1["Twilio:PhoneNumber"] ?? throw new ArgumentNullException(nameof(configuration));
         TwilioClient.Init(accountSid, authToken);
     }
 
@@ -26,7 +24,7 @@ public class TwilioSmsService
     {
         var messageResource = await MessageResource.CreateAsync(
             body: message,
-            from: new PhoneNumber(phoneNumber),
+            from: new PhoneNumber(_phoneNumber),
             to: new PhoneNumber(toPhoneNumber)
         );
 

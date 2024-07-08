@@ -4,7 +4,7 @@ namespace Awesome.Utils
 {
     public class CryptoUtils
     {
-        private PasswordHasher<string> _passwordHasher = new();
+        private readonly PasswordHasher<string> _passwordHasher = new();
 
         public string Hash(string user, string password)
         {

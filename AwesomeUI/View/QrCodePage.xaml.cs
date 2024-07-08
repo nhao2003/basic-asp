@@ -34,7 +34,7 @@ public partial class QrCodePage : ContentPage
         
         Dispatcher.DispatchAsync(async () =>
         {
-            await DisplayAlert("Barcode Detected", e.Results.FirstOrDefault().Value, "OK");
+            await DisplayAlert("Barcode Detected", e.Results.FirstOrDefault()?.Value, "OK");
             _isScanning = false;
         });
     }

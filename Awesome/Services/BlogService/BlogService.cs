@@ -13,19 +13,14 @@ namespace Awesome.Services.BlogService
     {
         public async Task<IEnumerable<Blog>> GetBlogs(QueryObject query)
         {
-            // var blogs = context.Blogs.Include(
-            //     x => x.Categories
-            // ).AsQueryable();
             var blogs = blogRepository.GetAllAsync().Include(
                 x => x.Categories
             ).AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(query.SortBy))
+            if (!string.IsNullOrWhiteSpace(query.SortBy) && query.SortBy.Equals("CreatedAt", StringComparison.OrdinalIgnoreCase))
             {
-                if (query.SortBy.Equals("CreatedAt", StringComparison.OrdinalIgnoreCase))
-                {
-                    blogs = query.IsDescending ? blogs.OrderByDescending(s => s.CreatedAt) : blogs.OrderBy(s => s.CreatedAt);
-                }
+
+                blogs = query.IsDescending ? blogs.OrderByDescending(s => s.CreatedAt) : blogs.OrderBy(s => s.CreatedAt);
             }
 
             var skipNumber = (query.PageNumber - 1) * query.PageSize;
@@ -40,19 +35,19 @@ namespace Awesome.Services.BlogService
             ).FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<Blog> CreateBlog(CreateBlogDto data)
+        public async Task<Blog> CreateBlog(CreateBlogDto createBlogDto)
         {
             var blog = new Blog
             {
-                Title = data.Title,
-                Description = data.Description,
-                Thumbnail = data.Thumbnail,
-                Author = data.Author,
-                Content = data.Content,
+                Title = createBlogDto.Title,
+                Description = createBlogDto.Description,
+                Thumbnail = createBlogDto.Thumbnail,
+                Author = createBlogDto.Author,
+                Content = createBlogDto.Content,
                 CreatedAt = DateTime.Now,
                 Categories = new List<Models.Entities.Category>()
             };
-            foreach (var categoryId in data.Categories)
+            foreach (var categoryId in createBlogDto.Categories)
             {
                 var category = await categoryService.GetById(categoryId);
                 if (category != null)

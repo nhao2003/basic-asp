@@ -1,15 +1,10 @@
 ﻿namespace Awesome.Services.SmsService;
 
-public class MockSmsService : ISmsService
+public class MockSmsService(ILogger<MockSmsService> logger) : ISmsService
 {
-    private ILogger<MockSmsService> logger;
-    
-    public MockSmsService(ILogger<MockSmsService> logger)
+    public Task SendSmsAsync(string toPhoneNumber, string message)
     {
-        this.logger = logger;
-    }
-    public async Task SendSmsAsync(string phoneNumber, string message)
-    {
-        logger.LogInformation($"Sending SMS to {phoneNumber}: {message}");
+        logger.LogDebug("Sending SMS to {PhoneNumber} with message: {Message}", toPhoneNumber, message);
+        return Task.CompletedTask;
     }
 }

@@ -33,8 +33,6 @@ namespace Awesome.Controllers
             var categories = await categoryService.GetAllAsync(query, sortBy, sortDirection, pageNumber, pageSize);
 
             var enumerable = categories as Category[] ?? categories.ToArray();
-            var response = enumerable.Select(category => new CategoryDto { Id = category.Id, Name = category.Name })
-                .ToList();
             var mappedResponse = enumerable.Select(mapper.Map<CategoryDto>).ToList();
             
             return Ok(mappedResponse);

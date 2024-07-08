@@ -11,5 +11,5 @@ public class UpdateProfileDto
     
     [Required]
     [DataType(DataType.Date)]
-    public DateOnly DateOfBirth { get; set; }
+    public required DateOnly DateOfBirth { get; set; }
 }

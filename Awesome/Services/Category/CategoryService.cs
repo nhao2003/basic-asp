@@ -45,21 +45,19 @@ public class CategoryService(ICategoryRepository categoryRepository) : ICategory
         var categories = categoryRepository.GetAllAsync().AsQueryable();
 
         // Filtering
-        if (string.IsNullOrWhiteSpace(query) == false)
+        if (!string.IsNullOrWhiteSpace(query))
         {
             categories = categories.Where(x => x.Name.Contains(query));
         }
 
-        if (string.IsNullOrWhiteSpace(sortBy) == false)
+        if (!string.IsNullOrWhiteSpace(sortBy) && string.Equals(sortBy, "Name", StringComparison.OrdinalIgnoreCase))
         {
-            if (string.Equals(sortBy, "Name", StringComparison.OrdinalIgnoreCase))
-            {
-                var isAsc = string.Equals(sortDirection, "asc", StringComparison.OrdinalIgnoreCase);
+            var isAsc = string.Equals(sortDirection, "asc", StringComparison.OrdinalIgnoreCase);
 
 
-                categories = isAsc ? categories.OrderBy(x => x.Name) : categories.OrderByDescending(x => x.Name);
-            }
+            categories = isAsc ? categories.OrderBy(x => x.Name) : categories.OrderByDescending(x => x.Name);
         }
+
 
         var skipResults = (pageNumber - 1) * pageSize;
         categories = categories.Skip(skipResults ?? 0).Take(pageSize ?? 100);

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Awesome.DTOs.User;
 
-public class OtpValidator : ValidationAttribute
+public class OtpValidatorAttribute : ValidationAttribute
 {
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {

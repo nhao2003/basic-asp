@@ -37,7 +37,7 @@ public class CategoryRepository : ICategoryRepository
     public Task DeleteAsync(Guid id)
     {
         var entity = _context.Categories.Find(id);
-        if (entity == null) throw new Exception("Category not found");
+        if (entity == null) throw new ArgumentNullException(nameof(id));
         _context.Categories.Remove(entity);
         return _context.SaveChangesAsync();
     }

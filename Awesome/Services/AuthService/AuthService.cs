@@ -29,16 +29,12 @@ namespace Awesome.Services.AuthService
 
         private readonly string _audience;
 
-        // private readonly ApplicationDbContext _context;
-        private readonly IEmailSender EmailSender;
 
         private readonly IUserRepository _userRepository;
         private readonly ISessionRepository _sessionRepository;
 
-        public AuthService(IConfiguration configuration, CryptoUtils cryptoUtils,
-            IEmailSender emailSender, IUserRepository userRepository, ISessionRepository sessionRepository)
+        public AuthService(IConfiguration configuration, CryptoUtils cryptoUtils, IUserRepository userRepository, ISessionRepository sessionRepository)
         {
-            EmailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
             _cryptoUtils = cryptoUtils ?? throw new ArgumentNullException(nameof(cryptoUtils));
             var configuration1 = configuration ?? throw new ArgumentNullException(nameof(configuration));
 

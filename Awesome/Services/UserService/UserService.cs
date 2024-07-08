@@ -44,15 +44,22 @@ namespace Awesome.Services.UserService
         {
             return await context.Users.FindAsync(userId);
         }
-
-
-        public async Task<User> UpdateUserEmailAsync(Guid userId, string email)
+        
+        private async Task<User> FindUserByIdAsync(Guid userId)
         {
             var user = await context.Users.FindAsync(userId);
             if (user == null)
             {
                 throw new KeyNotFoundException("User not found");
             }
+
+            return user;
+        }
+
+
+        public async Task<User> UpdateUserEmailAsync(Guid userId, string email)
+        {
+            var user = await FindUserByIdAsync(userId);
 
             user.Email = email;
             var otp = this.GenerateRandomString(6);
@@ -66,11 +73,7 @@ namespace Awesome.Services.UserService
 
         public async Task<User> UpdateUserAvatarAsync(Guid userId, Stream stream)
         {
-            var user = await context.Users.FindAsync(userId);
-            if (user == null)
-            {
-                throw new KeyNotFoundException("User not found");
-            }
+            var user = await FindUserByIdAsync(userId);
             const string folder = "profile-pictures";
             var fileName = $"{userId}.jpg";
             var url = await fileUploadService.UploadFileAsync(folder, fileName, stream);
@@ -82,11 +85,7 @@ namespace Awesome.Services.UserService
 
         public async Task<User> UpdateUserPhoneNumberAsync(Guid userId, string phoneNumber)
         {
-            var user = await context.Users.FindAsync(userId);
-            if (user == null)
-            {
-                throw new KeyNotFoundException("User not found");
-            }
+            var user = await FindUserByIdAsync(userId);
 
             user.PhoneNumber = phoneNumber;
             var otp = GenerateRandomString(6);
@@ -103,11 +102,7 @@ namespace Awesome.Services.UserService
 
         public async Task<User> UpdateUserProfileAsync(Guid userId, UpdateProfileDto updateProfileDto)
         {
-            var user = await context.Users.FindAsync(userId);
-            if (user == null)
-            {
-                throw new KeyNotFoundException("User not found");
-            }
+            var user = await FindUserByIdAsync(userId);
 
             user.FullName = updateProfileDto.FullName;
             user.DateOfBirth = updateProfileDto.DateOfBirth;
@@ -119,11 +114,7 @@ namespace Awesome.Services.UserService
 
         public async Task<User> VerifyEmailAsync(Guid userId, string otp)
         {
-            var user = await context.Users.FindAsync(userId);
-            if (user == null)
-            {
-                throw new KeyNotFoundException("User not found");
-            }
+            var user = await FindUserByIdAsync(userId);
 
             if (user.EmailVerifiedAt != null)
             {
@@ -145,11 +136,7 @@ namespace Awesome.Services.UserService
 
         public async Task<User> VerifyPhoneNumberAsync(Guid userId, string otp)
         {
-            var user = await context.Users.FindAsync(userId);
-            if (user == null)
-            {
-                throw new KeyNotFoundException("User not found");
-            }
+            var user = await FindUserByIdAsync(userId);
 
             if (user.PhoneNumberVerifiedAt != null)
             {

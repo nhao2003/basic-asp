@@ -4,16 +4,16 @@ namespace Awesome.Services.SmsService;
 
 public class VonageSmsMessage : ISmsService
 {
-    private VonageClient _vonageClient;
-    private ILogger<VonageSmsMessage> _logger;
-    private IConfiguration _configuration;
+    private readonly VonageClient _vonageClient;
+    private readonly ILogger<VonageSmsMessage> _logger;
+
     public VonageSmsMessage(ILogger<VonageSmsMessage> logger, IConfiguration configuration)
     {
         _logger = logger;
-        _configuration = configuration;
+        var configuration1 = configuration;
         var credentials = Credentials.FromApiKeyAndSecret(
-            _configuration["Vonage:ApiKey"],
-            _configuration["Vonage:ApiSecret"]
+            configuration1["Vonage:ApiKey"],
+            configuration1["Vonage:ApiSecret"]
         );
         _vonageClient = new VonageClient(credentials);
     }
@@ -31,7 +31,7 @@ public class VonageSmsMessage : ISmsService
             Text = message
         });
         _logger.LogDebug(response.ToString());
-        _logger.LogInformation($"Message sent to {toPhoneNumber}" +
+        _logger.LogDebug($"Message sent to {toPhoneNumber}" +
             $" with message: {message}");
     }
 }

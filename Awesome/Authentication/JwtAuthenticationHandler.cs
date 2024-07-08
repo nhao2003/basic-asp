@@ -31,7 +31,7 @@ namespace Awesome.Authentication
 
             var authorizationHeader = authorizationHeaderValues.FirstOrDefault();
             if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer ") ||
-                _tokenHandler.CanReadToken(authorizationHeader.Substring("Bearer ".Length).Trim()) != true)
+                _tokenHandler.CanReadToken(authorizationHeader["Bearer ".Length..].Trim()))
             {
                 return AuthenticateResult.Fail("Invalid authorization header.");
             }
