@@ -6,7 +6,7 @@ using Prism.Commands;
 
 namespace AwesomeUI.ViewModel;
 
-public class SignUpViewModel: BaseViewModel
+public partial class SignUpViewModel: BaseViewModel
 {
     
     private string _username = string.Empty;
@@ -42,7 +42,7 @@ public class SignUpViewModel: BaseViewModel
     
     private const string ErrorTitle = "Error!";
     
-    private readonly Regex _passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,32}$");
+    private readonly Regex _passwordRegex = MyRegex(TimeSpan.FromSeconds(1));
     
     private async void OnSignUp()
     {
@@ -89,6 +89,9 @@ public class SignUpViewModel: BaseViewModel
             IsBusy = false;
         }
     }
-    
-    
+
+    private static Regex MyRegex(TimeSpan matchTimeout)
+    {
+        return new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,32}$", RegexOptions.Compiled, matchTimeout);
+    }
 }

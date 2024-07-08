@@ -1,9 +1,12 @@
-﻿namespace AwesomeUI.Data.Remote;
+﻿using Microsoft.Extensions.Configuration;
 
-public abstract class BaseRemoteData(HttpClient httpClient)
+namespace AwesomeUI.Data.Remote;
+
+public abstract class BaseRemoteData(HttpClient httpClient, IConfiguration configuration)
 {
-    private static string emulatedBaseUrl = "http://10.0.2.2:8000/api";
-    private static string realBaseUrl = "http://192.168.1.14:8000/api";
-    protected readonly string BaseUrl = DeviceInfo.Current.DeviceType == DeviceType.Virtual ? emulatedBaseUrl : realBaseUrl;
+    private readonly string _emulatedBaseUrl = configuration["EmulatedBaseUrl"] ?? throw new ArgumentNullException(nameof(configuration));
+    private readonly string _realBaseUrl = configuration["RealBaseUrl"] ?? throw new ArgumentNullException(nameof(configuration));
+
+    protected string BaseUrl() => DeviceInfo.Current.DeviceType == DeviceType.Virtual ? _emulatedBaseUrl : _realBaseUrl;
     protected readonly HttpClient HttpClient = httpClient;
 }
