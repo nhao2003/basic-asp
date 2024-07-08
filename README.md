@@ -1,3 +1,4 @@
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=nhao2003_basic-asp)](https://sonarcloud.io/summary/new_code?id=nhao2003_basic-asp)
 # Awesome Project
 
 This is a C# project using .NET 8.0 and Docker.
