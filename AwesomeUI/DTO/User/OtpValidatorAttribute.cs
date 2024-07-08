@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace AwesomeUI.DTO.User;
 
-public class OtpValidatorAttribute : ValidationAttribute
+public partial class OtpValidatorAttribute : ValidationAttribute
 {
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
@@ -12,6 +12,9 @@ public class OtpValidatorAttribute : ValidationAttribute
             return new ValidationResult("OTP is required");
         }
 
-        return !Regex.IsMatch(value.ToString()!, @"^\d{6}$") ? new ValidationResult("OTP must be 6 digits") : ValidationResult.Success;
+        return !MyRegex().IsMatch(value.ToString()) ? new ValidationResult("OTP must be 6 digits") : ValidationResult.Success;
     }
+
+    [GeneratedRegex(@"^\d{6}$")]
+    private static Regex MyRegex() => new Regex(@"^\d{6}$", RegexOptions.Compiled, TimeSpan.FromMilliseconds(100));
 }
