@@ -4,15 +4,6 @@ namespace AwesomeUI.ViewModel;
 
 public partial class BaseViewModel : BindableBase
 {
-    // [ObservableProperty]
-    // [NotifyPropertyChangedFor(nameof(IsNotBusy))]
-    // bool isBusy;
-    //
-    // [ObservableProperty]
-    // string title;
-    //
-    // public bool IsNotBusy => !IsBusy;
-    
     private bool _isBusy;
     
     public bool IsBusy

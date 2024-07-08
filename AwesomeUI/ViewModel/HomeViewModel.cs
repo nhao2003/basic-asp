@@ -8,12 +8,10 @@ public partial class HomeViewModel : BaseViewModel
 {
     public ObservableCollection<Blog> Blogs { get; } = new();
     private readonly BlogService _blogService;
-    private readonly IConnectivity _connectivity;
     public DelegateCommand GetBlogsCommand { get; private set; }
-    public HomeViewModel( BlogService blogService, IConnectivity connectivity)
+    public HomeViewModel( BlogService blogService)
     {
         _blogService = blogService;
-        _connectivity = connectivity;
         Title = "Blog";
         GetBlogsCommand = new DelegateCommand(async () => await GetBlogsAsync());
     }

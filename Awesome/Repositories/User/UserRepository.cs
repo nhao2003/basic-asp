@@ -33,7 +33,7 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         var user = context.Users.Find(id);
         if (user == null)
         {
-            throw new NullReferenceException(nameof(id));
+            throw new ArgumentNullException(nameof(id));
         }
         context.Users.Remove(user);
         return context.SaveChangesAsync();

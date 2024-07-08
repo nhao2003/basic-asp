@@ -10,9 +10,9 @@ public class MailKitEmailSender(IOptions<MailKitEmailSenderOptions> options) : I
 {
     private MailKitEmailSenderOptions Options { get; set; } = options.Value;
 
-    public Task SendEmailAsync(string email, string subject, string message)
+    public Task SendEmailAsync(string email, string subject, string htmlMessage)
     {
-        return Execute(email, subject, message);
+        return Execute(email, subject, htmlMessage);
     }
 
     private Task Execute(string to, string subject, string htmlMessage)

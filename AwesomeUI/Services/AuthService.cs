@@ -1,10 +1,11 @@
 ﻿using System.Net.Http.Json;
 using System.Text;
 using AwesomeUI.DTO.Auth;
+using Microsoft.Extensions.Configuration;
 
 namespace AwesomeUI.Services;
 
-public class AuthService(HttpClient httpClient, IConnectivity connectivity) : BaseService(httpClient, connectivity)
+public class AuthService(HttpClient httpClient, IConnectivity connectivity, IConfiguration configuration) : BaseService(httpClient, connectivity, configuration)
 {
     private string? _accessToken;
     private string? _refreshToken;
@@ -15,7 +16,7 @@ public class AuthService(HttpClient httpClient, IConnectivity connectivity) : Ba
 
     public async Task<bool> SignInAsync(AuthRequest authRequest)
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/Auth/signin");
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{getBaseUrl()}/Auth/signin");
         var json = JsonSerializer.Serialize(authRequest);
         request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         try
@@ -39,14 +40,14 @@ public class AuthService(HttpClient httpClient, IConnectivity connectivity) : Ba
         {
             Debug.WriteLine($"Unable to sign in: {e}");
             // Clone the exception to avoid leaking sensitive information
-            Exception exception = new(e.Message + "\n" + BaseUrl + "/Auth/signin", e);
+            Exception exception = new(e.Message + "\n" + getBaseUrl() + "/Auth/signin", e);
             throw exception;
         }
     }
 
     public async Task<string?> SignUpAsync(AuthRequest authRequest)
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/Auth/signup");
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{getBaseUrl()}/Auth/signup");
         var json = JsonSerializer.Serialize(authRequest);
         request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         try
@@ -81,7 +82,7 @@ public class AuthService(HttpClient httpClient, IConnectivity connectivity) : Ba
     {
         var refreshToken = await SecureStorage.GetAsync("RefreshToken");
         if (refreshToken == null) return false;
-        var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/Auth/refresh");
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{getBaseUrl()}/Auth/refresh");
         var json = JsonSerializer.Serialize(new { refreshToken });
         request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         try

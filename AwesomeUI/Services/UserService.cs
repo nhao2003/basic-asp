@@ -1,42 +1,46 @@
-﻿
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using AwesomeUI.DTO.User;
+using Microsoft.Extensions.Configuration;
 
 namespace AwesomeUI.Services;
 
-public class UserService(HttpClient httpClient, AuthService authService, IConnectivity connectivity) : BaseService(httpClient, connectivity)
+public class UserService(
+    HttpClient httpClient,
+    AuthService authService,
+    IConnectivity connectivity,
+    IConfiguration configuration) : BaseService(httpClient, connectivity, configuration)
 {
     private String? AccessToken => authService.AccessToken;
-    
+
     public async Task<UserResponseDto?> GetUserAsync()
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl}/User");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"{getBaseUrl()}/User");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
-        
+
         var response = await HttpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();
-        
+
         var content = await response.Content.ReadAsStringAsync();
         return JsonSerializer.Deserialize<UserResponseDto>(content);
     }
-    
+
     public async Task<bool> UpdateUserAsync(UpdateProfileDto updateProfileDto)
     {
-        var request = new HttpRequestMessage(HttpMethod.Put, $"{BaseUrl}/User/profile");
+        var request = new HttpRequestMessage(HttpMethod.Put, $"{getBaseUrl()}/User/profile");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
-        
+
         var json = JsonSerializer.Serialize(updateProfileDto);
         request.Content = new StringContent(json, Encoding.UTF8, "application/json");
-        
+
         var response = await HttpClient.SendAsync(request);
         return response.IsSuccessStatusCode;
     }
-    
+
     public async Task<bool> UploadProfilePictureAsync(FileResult fileResult)
     {
-        var request = new HttpRequestMessage(HttpMethod.Put, $"{BaseUrl}/User/avatar");
+        var request = new HttpRequestMessage(HttpMethod.Put, $"{getBaseUrl()}/User/avatar");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
         // Set content type to multipart/form-data
         var fileContent = new StreamContent(await fileResult.OpenReadAsync());

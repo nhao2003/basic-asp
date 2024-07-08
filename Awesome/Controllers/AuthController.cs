@@ -15,12 +15,14 @@ namespace Awesome.Controllers
     [ApiController]
     public class AuthController(IAuthService authenticationService) : ControllerBase
     {
+        private const string InvalidRequestMessage = "Invalid request";
+
         [HttpPost("signin")]
         public async Task<IActionResult> SignInAsync([FromBody] AuthenticationRequest? request)
         {
             if (request == null)
             {
-                return BadRequest(new { message = "Invalid request" });
+                return BadRequest(new { message = InvalidRequestMessage });
             }
 
             try
@@ -43,7 +45,7 @@ namespace Awesome.Controllers
         {
             if (request == null)
             {
-                return BadRequest(new { message = "Invalid request" });
+                return BadRequest(new { _invalidRequestMessage = InvalidRequestMessage });
             }
 
             try
@@ -69,7 +71,7 @@ namespace Awesome.Controllers
             
             if (nameIdentifier == null || refreshToken == null)
             {
-                return BadRequest(new { message = "Invalid request" });
+                return BadRequest(new { _invalidRequestMessage = InvalidRequestMessage });
             }
             
             await authenticationService.SignOut(Guid.Parse(nameIdentifier.Value), Guid.Parse(refreshToken));
@@ -83,7 +85,7 @@ namespace Awesome.Controllers
         {
             if (request == null || string.IsNullOrWhiteSpace(request.RefreshToken))
             {
-                return BadRequest(new { message = "Invalid request" });
+                return BadRequest(new { _invalidRequestMessage = InvalidRequestMessage });
             }
 
             try

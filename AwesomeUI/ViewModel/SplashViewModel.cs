@@ -6,7 +6,7 @@ namespace AwesomeUI.ViewModel;
 public class SplashViewModel : BaseViewModel
 {
     private readonly AuthService _authService;
-    private IConnectivity _connectivity;
+    private readonly IConnectivity _connectivity;
     public SplashViewModel(AuthService authService, IConnectivity connectivity)
     {
         _authService = authService;
@@ -53,17 +53,17 @@ public class SplashViewModel : BaseViewModel
         
         if (cameraPermission != PermissionStatus.Granted)
         {
-            cameraPermission = await Permissions.RequestAsync<Permissions.Camera>();
+             await Permissions.RequestAsync<Permissions.Camera>();
         }
         
         if (storagePermission != PermissionStatus.Granted)
         {
-            storagePermission = await Permissions.RequestAsync<Permissions.StorageWrite>();
+            await Permissions.RequestAsync<Permissions.StorageWrite>();
         }
         
         if (locationPermission != PermissionStatus.Granted)
         {
-            locationPermission = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+            await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
         }
     }
 }

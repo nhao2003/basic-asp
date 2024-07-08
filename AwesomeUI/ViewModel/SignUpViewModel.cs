@@ -33,14 +33,16 @@ public class SignUpViewModel: BaseViewModel
     
     public DelegateCommand SignUpCommand { get; }
     
-    private AuthService _authService;
+    private readonly AuthService _authService;
     public SignUpViewModel(AuthService authService) 
     {
         SignUpCommand = new DelegateCommand(OnSignUp);
         _authService = authService;
     }
     
-    private Regex _passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,32}$");
+    private const string ErrorTitle = "Error!";
+    
+    private readonly Regex _passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,32}$");
     
     private async void OnSignUp()
     {
@@ -53,26 +55,26 @@ public class SignUpViewModel: BaseViewModel
             
             if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(ConfirmPassword))
             {
-                await Shell.Current.DisplayAlert("Error!", "Username, password and confirm password are required.", "OK");
+                await Shell.Current.DisplayAlert(ErrorTitle, "Username, password and confirm password are required.", "OK");
                 return;
             }
             
             if (!_passwordRegex.IsMatch(Password))
             {
-                await Shell.Current.DisplayAlert("Error!", "Password must be 8-32 characters long and contain at least one lowercase letter, one uppercase letter, one digit and one special character.", "OK");
+                await Shell.Current.DisplayAlert(ErrorTitle, "Password must be 8-32 characters long and contain at least one lowercase letter, one uppercase letter, one digit and one special character.", "OK");
                 return;
             }
             
             if (Password != ConfirmPassword)
             {
-                await Shell.Current.DisplayAlert("Error!", "Password and confirm password do not match.", "OK");
+                await Shell.Current.DisplayAlert(ErrorTitle, "Password and confirm password do not match.", "OK");
                 return;
             }
             
             var error = await _authService.SignUpAsync(new AuthRequest(Username, Password));
             if (error != null)
             {
-                await Shell.Current.DisplayAlert("Error!", error, "OK");
+                await Shell.Current.DisplayAlert(ErrorTitle, error, "OK");
                 return;
             }
             
@@ -80,7 +82,7 @@ public class SignUpViewModel: BaseViewModel
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert("Error!", ex.Message, "OK");
+            await Shell.Current.DisplayAlert(ErrorTitle, ex.Message, "OK");
         }
         finally
         {
