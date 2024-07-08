@@ -9,8 +9,7 @@ namespace AwesomeUI.Services;
 public class UserService(
     HttpClient httpClient,
     AuthService authService,
-    IConnectivity connectivity,
-    IConfiguration configuration) : BaseService(httpClient, connectivity, configuration)
+    IConnectivity connectivity) : BaseService(httpClient, connectivity)
 {
     private String? AccessToken => authService.AccessToken;
 

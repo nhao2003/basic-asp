@@ -5,19 +5,13 @@ using Microsoft.Extensions.Configuration;
 
 namespace AwesomeUI.Data.Remote;
 
-public class BlogRemoteData: BaseRemoteData, IBlogRemoteData
+public class BlogRemoteData(HttpClient httpClient, AuthService authService)
+    : BaseRemoteData(httpClient), IBlogRemoteData
 {
-    private readonly AuthService _authService;
-    
-    public BlogRemoteData(HttpClient httpClient, AuthService authService, IConfiguration configuration) : base(httpClient, configuration)
-    {
-        _authService = authService;
-    }
-
     public async Task<List<Blog>?> GetBlogsAsync()
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl}/Blog");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _authService.AccessToken);
+        var request = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl()}/Blog");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authService.AccessToken);
         var response = await HttpClient.SendAsync(request);
         if (response.IsSuccessStatusCode)
         {
@@ -28,8 +22,8 @@ public class BlogRemoteData: BaseRemoteData, IBlogRemoteData
 
     public async Task<Blog?> GetBlogAsync(string id)
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl}/Blog/{id}");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _authService.AccessToken);
+        var request = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl()}/Blog/{id}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authService.AccessToken);
         var response = await HttpClient.SendAsync(request);
         if (response.IsSuccessStatusCode)
         {

@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AwesomeUI.Config;
 
 namespace AwesomeUI.Services;
 
-public abstract class BaseService(HttpClient httpClient, IConnectivity connectivity, IConfiguration configuration)
+public abstract class BaseService(HttpClient httpClient, IConnectivity connectivity)
 {
-    private readonly string _emulatedBaseUrl = configuration["EmulatedBaseUrl"] ?? throw new ArgumentNullException(nameof(configuration));
-    private readonly string _realBaseUrl = configuration["RealBaseUrl"] ?? throw new ArgumentNullException(nameof(configuration));
+    private readonly string _emulatedBaseUrl = AppConfig.EmulatedBaseUrl;
+    private readonly string _realBaseUrl = AppConfig.RealBaseUrl;
 
     protected string GetBaseUrl() => DeviceInfo.DeviceType == DeviceType.Virtual ? _emulatedBaseUrl : _realBaseUrl;
 

@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using AwesomeUI.Config;
 using AwesomeUI.Data.Local;
 using AwesomeUI.Data.Remote;
 using Microsoft.Extensions.Configuration;
@@ -10,7 +11,7 @@ public class BlogService(
     IConnectivity connectivity,
     HttpClient httpClient,
     IBlogLocalData blogLocalData,
-    IBlogRemoteData blogRemoteData, IConfiguration configuration) : BaseService(httpClient, connectivity, configuration)
+    IBlogRemoteData blogRemoteData) : BaseService(httpClient, connectivity)
 {
     public async Task<List<Blog>?> GetBlogs()
     {

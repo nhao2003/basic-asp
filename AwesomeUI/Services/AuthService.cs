@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace AwesomeUI.Services;
 
-public class AuthService(HttpClient httpClient, IConnectivity connectivity, IConfiguration configuration) : BaseService(httpClient, connectivity, configuration)
+public class AuthService(HttpClient httpClient, IConnectivity connectivity) : BaseService(httpClient, connectivity)
 {
     private string? _accessToken;
     private string? _refreshToken;

@@ -12,7 +12,7 @@ namespace Awesome.Authentication
 {
     public class JwtAuthenticationHandler : JwtBearerHandler
     {
-        private readonly JwtSecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
+        private readonly JwtSecurityTokenHandler _tokenHandler = new();
         private readonly ApplicationDbContext _context;
 
         public JwtAuthenticationHandler(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger,
@@ -31,7 +31,7 @@ namespace Awesome.Authentication
 
             var authorizationHeader = authorizationHeaderValues.FirstOrDefault();
             if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer ") ||
-                _tokenHandler.CanReadToken(authorizationHeader["Bearer ".Length..].Trim()))
+                !_tokenHandler.CanReadToken(authorizationHeader["Bearer ".Length..].Trim()))
             {
                 return AuthenticateResult.Fail("Invalid authorization header.");
             }
@@ -51,8 +51,12 @@ namespace Awesome.Authentication
                 var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
 
                 if (!IsValidJwtToken(validatedToken)) return AuthenticateResult.Fail("Invalid token.");
+                var value = principal.FindFirst("SessionId")?.Value;
+                if (value == null)
+                    return AuthenticateResult.Success(new AuthenticationTicket(principal,
+                        JwtBearerDefaults.AuthenticationScheme));
                 var session =
-                    await _context.Sessions.FindAsync(Guid.Parse(principal.FindFirst("SessionId")?.Value));
+                    await _context.Sessions.FindAsync(Guid.Parse(value));
                 if (session == null)
                 {
                     return AuthenticateResult.Fail("Invalid token.");
@@ -72,7 +76,7 @@ namespace Awesome.Authentication
             }
         }
 
-        private TokenValidationParameters GetTokenValidationParameters(byte[] key)
+        private static TokenValidationParameters GetTokenValidationParameters(byte[] key)
         {
             return new TokenValidationParameters
             {
@@ -85,7 +89,7 @@ namespace Awesome.Authentication
             };
         }
 
-        private bool IsValidJwtToken(SecurityToken validatedToken)
+        private static bool IsValidJwtToken(SecurityToken validatedToken)
         {
             return validatedToken is JwtSecurityToken jwtToken &&
                    jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,

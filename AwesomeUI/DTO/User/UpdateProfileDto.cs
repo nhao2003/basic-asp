@@ -7,7 +7,7 @@ public class UpdateProfileDto
     [Required]
     [DataType(DataType.Text)]
     [MaxLength(50)]
-    public string FullName { get; set; }
+    public required string FullName { get; set; }
     
     [Required]
     [DataType(DataType.Date)]

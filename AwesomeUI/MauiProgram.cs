@@ -1,7 +1,10 @@
-﻿using AwesomeUI.Data.Local;
+﻿using System.Reflection;
+using AwesomeUI.Data.Local;
 using AwesomeUI.Data.Remote;
 using AwesomeUI.Services;
 using AwesomeUI.View;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Logging;
 using SQLite;
 using ZXing.Net.Maui.Controls;
@@ -35,41 +38,42 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
-        
+
         builder.Services.AddSingleton<SQLiteAsyncConnection>(_ =>
         {
-            var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AwesomeUI.db3");
+            var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "AwesomeUI.db3");
             return new LocalDatabase(dbPath);
         });
-        
+
         builder.Services.AddSingleton<IConnectivity>(Connectivity.Current);
         builder.Services.AddSingleton(Geolocation.Default);
         builder.Services.AddSingleton(Map.Default);
-        
+
         builder.Services.AddSingleton<IBlogLocalData, BlogLocalData>();
         builder.Services.AddSingleton<IBlogRemoteData, BlogRemoteData>();
-        
-		      
+
+
         builder.Services.AddSingleton<BlogService>();
         builder.Services.AddSingleton<HomeViewModel>();
         builder.Services.AddSingleton<HomePage>();
-        
+
         builder.Services.AddTransient<BlogDetailViewModel>();
         builder.Services.AddTransient<BlogDetailPage>();
         builder.Services.AddSingleton<HttpClient>();
         builder.Services.AddSingleton<AuthService>();
         builder.Services.AddTransient<SignInViewModel>();
         builder.Services.AddTransient<SignInPage>();
-        
+
         builder.Services.AddSingleton<UserService>();
         builder.Services.AddTransient<AccountViewModel>();
         builder.Services.AddTransient<AccountPage>();
-        
+
         builder.Services.AddTransient<SignUpViewModel>();
-        
+
         builder.Services.AddSingleton<SettingViewModel>();
         builder.Services.AddSingleton<SettingPage>();
-        
+
         builder.Services.AddSingleton<SplashViewModel>();
         builder.Services.AddSingleton<SplashPage>();
 

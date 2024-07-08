@@ -4,7 +4,7 @@ namespace AwesomeUI.DTO.User;
 
 public class UserResponseDto
 {
-    public string Id { get; set; }
+    public required string Id { get; set; }
     [JsonPropertyName("email")]
     public string? Email { get; set; }
     [JsonPropertyName("phoneNumber")]

@@ -87,7 +87,7 @@ namespace AwesomeUI.Controls
                             _ => throw new ArgumentException("Invalid URL format"),
                         };
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         // Handle exception, e.g., log or set a default image
                         control.ThumbnailImage.Source = ImageSource.FromFile("default_image.png");
