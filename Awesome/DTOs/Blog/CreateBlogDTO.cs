@@ -6,22 +6,22 @@ namespace Awesome.DTOs.Blog
     {
         [Required]
         [StringLength(255)]
-        public string Title { get; set; }
+        public required string Title { get; init; }
         [Required]
         [DataType(DataType.MultilineText)]
-        public string Description { get; set; }
+        public required string Description { get; init; }
 
         [Required]
         [Url]
-        public string Thumbnail { get; set; }
+        public required string Thumbnail { get; init; }
 
         [Required]
         [StringLength(255)]
-        public string Author { get; set; }
+        public required string Author { get; init; }
         [Required]
         [DataType(DataType.MultilineText)]
-        public string Content { get; set; }
+        public required string Content { get; init; }
 
-        public Guid[] Categories { get; set; }
+        public required Guid[] Categories { get; init; }
     }
 }

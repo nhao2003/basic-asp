@@ -4,13 +4,13 @@ namespace Awesome.DTOs.Blog;
 
 public class BlogResponseDto
 {
-    public string Id { get; set; }
-    public string Title { get; set; }
-    public string Description { get; set; }
-    public string Thumbnail { get; set; }
-    public string Author { get; set; }
-    public string Content { get; set; }
-    public List<string> Categories { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
+    public required string Id { get; init; }
+    public required string Title { get; init; }
+    public required string Description { get; init; }
+    public required string Thumbnail { get; init; }
+    public required string Author { get; init; }
+    public required string Content { get; init; }
+    public required List<string> Categories { get; init; }
+    public DateTime CreatedAt { get; init; }
+    public DateTime? UpdatedAt { get; init; }
 }

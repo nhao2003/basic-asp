@@ -2,6 +2,6 @@
 
 public class CategoryDto
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
+    public required Guid Id { get; init; }
+    public required string Name { get; init; }
 }

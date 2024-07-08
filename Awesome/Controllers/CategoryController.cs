@@ -10,8 +10,6 @@ namespace Awesome.Controllers
     [ApiController]
     public class CategoryController(ICategoryService categoryService, IMapper mapper) : ControllerBase
     {
-        private readonly IMapper _mapper = mapper;
-
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequestDto request)
         {
