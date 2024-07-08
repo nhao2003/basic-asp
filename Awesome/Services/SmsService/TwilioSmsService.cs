@@ -22,15 +22,10 @@ public class TwilioSmsService
 
     public async Task SendSmsAsync(string toPhoneNumber, string message)
     {
-        var messageResource = await MessageResource.CreateAsync(
+        await MessageResource.CreateAsync(
             body: message,
             from: new PhoneNumber(_phoneNumber),
             to: new PhoneNumber(toPhoneNumber)
         );
-
-        if (messageResource.ErrorCode.HasValue)
-        {
-            throw new Exception(messageResource.ErrorMessage);
-        }
     }
 }

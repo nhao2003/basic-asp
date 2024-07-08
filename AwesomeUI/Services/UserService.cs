@@ -16,7 +16,7 @@ public class UserService(
 
     public async Task<UserResponseDto?> GetUserAsync()
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"{getBaseUrl()}/User");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"{GetBaseUrl()}/User");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
 
         var response = await HttpClient.SendAsync(request);
@@ -28,7 +28,7 @@ public class UserService(
 
     public async Task<bool> UpdateUserAsync(UpdateProfileDto updateProfileDto)
     {
-        var request = new HttpRequestMessage(HttpMethod.Put, $"{getBaseUrl()}/User/profile");
+        var request = new HttpRequestMessage(HttpMethod.Put, $"{GetBaseUrl()}/User/profile");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
 
         var json = JsonSerializer.Serialize(updateProfileDto);
@@ -40,7 +40,7 @@ public class UserService(
 
     public async Task<bool> UploadProfilePictureAsync(FileResult fileResult)
     {
-        var request = new HttpRequestMessage(HttpMethod.Put, $"{getBaseUrl()}/User/avatar");
+        var request = new HttpRequestMessage(HttpMethod.Put, $"{GetBaseUrl()}/User/avatar");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
         // Set content type to multipart/form-data
         var fileContent = new StreamContent(await fileResult.OpenReadAsync());

@@ -1,19 +1,13 @@
-﻿using Awesome.Data;
-using Awesome.DTOs.Auth;
+﻿using Awesome.DTOs.Auth;
 using Awesome.Models.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Awesome.Repositories;
 using Awesome.Repositories.Session;
 using Awesome.Repositories.User;
 using Awesome.Utils;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
-using Vonage.Video.Authentication;
 
 namespace Awesome.Services.AuthService
 {
@@ -33,26 +27,25 @@ namespace Awesome.Services.AuthService
         private readonly IUserRepository _userRepository;
         private readonly ISessionRepository _sessionRepository;
 
-        public AuthService(IConfiguration configuration, CryptoUtils cryptoUtils, IUserRepository userRepository, ISessionRepository sessionRepository)
+        public AuthService(IConfiguration configuration, CryptoUtils cryptoUtils, IUserRepository userRepository,
+            ISessionRepository sessionRepository)
         {
             _cryptoUtils = cryptoUtils ?? throw new ArgumentNullException(nameof(cryptoUtils));
             var configuration1 = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             _accessSecretKey = configuration1["Jwt:AccessSecretKey"] ??
-                               throw new ArgumentNullException("Jwt:AccessSecretKey is missing in appsettings.json");
+                               throw new ArgumentNullException(nameof(configuration));
             _refreshSecretKey = configuration1["Jwt:RefreshSecretKey"] ??
-                                throw new ArgumentNullException("Jwt:RefreshSecretKey is missing in appsettings.json");
+                                throw new ArgumentNullException(nameof(configuration));
             _tokenLifeTime = double.Parse(configuration1["Jwt:TokenLifeTime"] ??
-                                          throw new ArgumentNullException(
-                                              "Jwt:TokenLifeTime is missing in appsettings.json"));
+                                          throw new ArgumentNullException(nameof(configuration)));
             _refreshTokenLifeTime = double.Parse(configuration1["Jwt:RefreshTokenLifeTime"] ??
-                                                 throw new ArgumentNullException(
-                                                     "Jwt:RefreshTokenLifeTime is missing in appsettings.json"));
+                                                 throw new ArgumentNullException(nameof(configuration)));
             _issuer = configuration1["Jwt:Issuer"] ??
-                      throw new ArgumentNullException("Jwt:Issuer is missing in appsettings.json");
+                      throw new ArgumentNullException(nameof(configuration));
             _audience = configuration1["Jwt:Audience"] ??
-                        throw new ArgumentNullException("Jwt:Audience is missing in appsettings.json");
-            
+                        throw new ArgumentNullException(nameof(configuration));
+
             _userRepository = userRepository;
             _sessionRepository = sessionRepository;
         }
@@ -60,7 +53,7 @@ namespace Awesome.Services.AuthService
         private string GenerateToken(string sessionId, User? user, string secretKey, double expiryTime)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
@@ -75,7 +68,7 @@ namespace Awesome.Services.AuthService
                 audience: _audience,
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(expiryTime),
-                signingCredentials: creds);
+                signingCredentials: credentials);
 
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -154,7 +147,7 @@ namespace Awesome.Services.AuthService
                     ValidAudience = _audience
                 }, out var validatedToken);
 
-                if (validatedToken is not JwtSecurityToken jwtToken)
+                if (validatedToken is not JwtSecurityToken)
                 {
                     throw new SecurityTokenException("Invalid token");
                 }

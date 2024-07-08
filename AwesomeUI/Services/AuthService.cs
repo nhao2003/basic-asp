@@ -16,7 +16,7 @@ public class AuthService(HttpClient httpClient, IConnectivity connectivity, ICon
 
     public async Task<bool> SignInAsync(AuthRequest authRequest)
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, $"{getBaseUrl()}/Auth/signin");
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{GetBaseUrl()}/Auth/signin");
         var json = JsonSerializer.Serialize(authRequest);
         request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         try
@@ -40,14 +40,14 @@ public class AuthService(HttpClient httpClient, IConnectivity connectivity, ICon
         {
             Debug.WriteLine($"Unable to sign in: {e}");
             // Clone the exception to avoid leaking sensitive information
-            Exception exception = new(e.Message + "\n" + getBaseUrl() + "/Auth/signin", e);
+            Exception exception = new(e.Message + "\n" + GetBaseUrl() + "/Auth/signin", e);
             throw exception;
         }
     }
 
     public async Task<string?> SignUpAsync(AuthRequest authRequest)
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, $"{getBaseUrl()}/Auth/signup");
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{GetBaseUrl()}/Auth/signup");
         var json = JsonSerializer.Serialize(authRequest);
         request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         try
@@ -82,7 +82,7 @@ public class AuthService(HttpClient httpClient, IConnectivity connectivity, ICon
     {
         var refreshToken = await SecureStorage.GetAsync("RefreshToken");
         if (refreshToken == null) return false;
-        var request = new HttpRequestMessage(HttpMethod.Post, $"{getBaseUrl()}/Auth/refresh");
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{GetBaseUrl()}/Auth/refresh");
         var json = JsonSerializer.Serialize(new { refreshToken });
         request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         try

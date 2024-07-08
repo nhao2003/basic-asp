@@ -11,7 +11,7 @@ public partial class SignInViewModel : BaseViewModel
     public DelegateCommand SignInCommand { get; private set; }
     public DelegateCommand GoToSignUpCommand { get; private set; }
     
-    private IConnectivity _connectivity;
+    private readonly IConnectivity _connectivity;
     public SignInViewModel(AuthService authService, IConnectivity connectivity)
     {
         _authService = authService;

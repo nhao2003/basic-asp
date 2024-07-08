@@ -19,7 +19,7 @@ public class VonageSmsMessage : ISmsService
     }
     public async Task SendSmsAsync(string toPhoneNumber, string message)
     {
-        if (toPhoneNumber.StartsWith("0"))
+        if (toPhoneNumber.StartsWith('0'))
         {
             toPhoneNumber = toPhoneNumber.Remove(0, 1);
             toPhoneNumber = $"+84{toPhoneNumber}";
@@ -31,7 +31,6 @@ public class VonageSmsMessage : ISmsService
             Text = message
         });
         _logger.LogDebug(response.ToString());
-        _logger.LogDebug($"Message sent to {toPhoneNumber}" +
-            $" with message: {message}");
+        _logger.LogDebug("Message sent to {ToPhoneNumber} with message: {Message}", toPhoneNumber, message);
     }
 }
